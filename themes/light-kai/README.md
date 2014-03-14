@@ -10,7 +10,7 @@ A self-customized [Hexo] theme based on [Light]
 
 #### Added Lang
 
-* `jp` - now can be configured in `_config.yml`, be careful with poor transilations...
+* `jp` - now can be configured in `_config.yml`, be careful with poor translations...
 
 _if possible, me can make it a hexo-theme repo ? XD_
 
