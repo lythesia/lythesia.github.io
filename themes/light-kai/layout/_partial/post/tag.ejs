@@ -1,0 +1,15 @@
+<% if (item.tags && item.tags.length){ %>
+  <%
+  var tags = [];
+  item.tags.forEach(function(tag){
+    tags.push('<a href="' + config.root + tag.path + '">' + tag.name + '</a>');
+  });
+  %>
+  <div class="tags tag">
+    <ul class="inline">
+      <% tags.forEach(function(item) { %>
+        <li><%- item %></li>
+      <% }); %>
+    </ul>
+  </div>
+<% } %>

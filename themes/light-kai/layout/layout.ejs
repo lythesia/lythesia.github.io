@@ -1,0 +1,19 @@
+<%- partial('_partial/head') %>
+
+<body>
+  <header id="header" class="inner"><%- partial('_partial/header') %></header>
+  <div id="content" class="inner">
+    <% if (!page.nowidget)  { %>
+      <div id="main-col" class="alignleft"><div id="wrapper"><%- body %></div></div>
+      <aside id="sidebar" class="alignright"><%- partial('_partial/sidebar') %></aside>
+      <div class="clearfix"></div>
+    <% } else { %>
+      <div align="center">
+        <div id="about" style="width:75%;"><%- body %></div>
+      </div>
+    <% } %>
+  </div>
+  <footer id="footer" class="inner"><%- partial('_partial/footer') %></footer>
+  <%- partial('_partial/after_footer') %>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<% if (site.posts.length) { %>
+<div class="widget">
+  <h3 class="title"><%= __('archive_a') %></h3>
+  <%- list_archives({class: 'entry', format: 'YYYY - MM'}) %>
+</div>
+<% } %>

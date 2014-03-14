@@ -1,0 +1,14 @@
+<% if (true) { %>
+<div class="widget">
+  <h3 class="title"><%= __('about') %></h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:<%= config.email %>"><i class="mail"></i><strong><%= config.email %></strong></a></li>
+        <li><a href="<%= config.github %>"><i class="github"></i><strong><%= config.github %></strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>
