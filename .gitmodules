@@ -1,0 +1,3 @@
+[submodule "themes/light-kai"]
+	path = themes/light-kai
+	url = ../hexo-theme-light-kai/
