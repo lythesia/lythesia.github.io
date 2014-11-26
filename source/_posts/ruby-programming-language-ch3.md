@@ -1,4 +1,4 @@
-title: ruby-programming-language(ch3)
+title: ruby programming language(ch3)
 date: 2014-11-26 13:30:56
 categories: lang
 tags: [ruby, note]
@@ -11,7 +11,7 @@ tags: [ruby, note]
 ```
 Numeric -- Integer
     |         |-- Fixnum
-    |         |-- Bignum
+    |         `-- Bignum
     |----- Float
     |----- Complex*
     |----- BigDecimal*
