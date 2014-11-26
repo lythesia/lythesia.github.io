@@ -4,9 +4,9 @@ categories: lang
 tags: [ruby, note]
 ---
 
-## Pre-study
+# Pre-study
 
-### rvm
+## rvm
 
 If you need to separate configurations & gems for each ruby project individually, [rvm](rvm.io) is a good tool.
 
@@ -26,11 +26,11 @@ some tips:
 * make sure your term enable **login-shell**
 * source rvm at last as possible to avoid warning: `...path/to/ruby-bin not at first place in PATH...`
 
-### pry
+## pry
 
 Interactive tool like `bpython`, i use `pry --simple-prompt` for convenient like noob test, etc.
 
-### ri
+## ri
 
 Ruby manual, e.g: `ri Array`, `ri Array.sort`, `ri Hash#each`, `ri Math::sqrt`.
 
@@ -38,9 +38,9 @@ Ruby manual, e.g: `ri Array`, `ri Array.sort`, `ri Hash#each`, `ri Math::sqrt`.
 ----
 
 
-## Ch2
+# Ch2
 
-### comments
+## comments
 
 ```ruby
 # line comment
@@ -55,7 +55,7 @@ block comment
 * there's no `/* */` like comment.
 * `#` is prior to `=begin(end)`
 
-### some symbol in identifiers
+## some symbol in identifiers
 
 prefix/suffix:
 
@@ -73,7 +73,7 @@ reserved word:
 * `__FILE__`
 * `__END__`: after goes the data, you can refer these data by `DATA`
 
-### spaces
+## spaces
 
 one line is implicitly closed if it's a **complete** expression, check:
 
