@@ -8,16 +8,14 @@ tags: [ruby, note]
 
 ## number
 
-```
-Numeric -- Integer
-    |         |-- Fixnum
-    |         `-- Bignum
-    |----- Float
-    |----- Complex*
-    |----- BigDecimal*
-    `----- Rational*
-(* as standard lib of ruby, rest built-in)
-```
+    Numeric -- Integer
+        |         |-- Fixnum
+        |         `-- Bignum
+        |----- Float
+        |----- Complex*
+        |----- BigDecimal*
+        `----- Rational*
+    (* as standard lib of ruby, rest built-in)
 
 
 ``` ruby
