@@ -244,7 +244,7 @@ autoload :TCPSocket, "socket"
 
 * anonymouse class attached to an object, to open it `class << some; def .. end end`
 * `class << class_name` define class method of class_name or within class def `class << self`
-* `clsas << object` define singleton method of object
+* `class << object` define singleton method of object
 
 ## method lookup
 
