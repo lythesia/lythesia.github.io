@@ -1,0 +1,374 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>ruby programming language(ch8) | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="Ch8type,class,moduleancestry12345&amp;lt;module&amp;gt;.ancestors # =&amp;gt; modules&amp;lt;class&amp;gt;.ancestors  # =&amp;gt; self, modules, superclass .. Object, Kernel(">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ruby programming language(ch8)"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css"><!-- hexo-inject:begin --><link href='/cplayer/cp.min.css' rel='stylesheet'><script src='/cplayer/cp.min.js' type='text/javascript'></script><!-- hexo-inject:end -->
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-12-11T13:26:58.000Z"><a href="/2014/12/11/ruby-programming-language-ch8/"><i>2014-12-11</i></a></time>
+      
+      
+  
+    <h1 class="title">ruby programming language(ch8)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="Ch8"><a href="#Ch8" class="headerlink" title="Ch8"></a>Ch8</h1><h2 id="type-class-module"><a href="#type-class-module" class="headerlink" title="type,class,module"></a>type,class,module</h2><h3 id="ancestry"><a href="#ancestry" class="headerlink" title="ancestry"></a>ancestry</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;<span class="class"><span class="keyword">module</span>&gt;.<span class="title">ancestors</span> <span class="comment"># =&gt; modules</span></span></div><div class="line">&lt;<span class="class"><span class="keyword">class</span>&gt;.<span class="title">ancestors</span>  <span class="comment"># =&gt; self, modules, superclass .. Object, Kernel(module)</span></span></div><div class="line"></div><div class="line">&lt;<span class="class"><span class="keyword">module</span>&gt;.<span class="title">included_modules</span> <span class="comment"># =&gt; ..</span></span></div><div class="line">&lt;<span class="class"><span class="keyword">class</span>&gt;.<span class="title">included_modules</span>  <span class="comment"># =&gt; .. Kernel</span></span></div></pre></td></tr></table></figure>
+<h3 id="def"><a href="#def" class="headerlink" title="def"></a>def</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">M = Module.new</div><div class="line">D = Class.new(C) &#123; <span class="keyword">include</span> M &#125;</div></pre></td></tr></table></figure>
+<h2 id="eval"><a href="#eval" class="headerlink" title="eval"></a>eval</h2><h3 id="binding-amp-eval"><a href="#binding-amp-eval" class="headerlink" title="binding &amp; eval"></a>binding &amp; eval</h3><p><code>eval 1 [2]</code>:</p>
+<ol>
+<li>eval string</li>
+<li><strong>Binding</strong> object</li>
+</ol>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">eval(.., obj.binding) <span class="comment"># obj.binding.eval(..), make sure `binding` return the binding object</span></div><div class="line">eval(..) <span class="comment"># Kernel.eval(..) or eval(.., Kernel.binding)</span></div></pre></td></tr></table></figure>
+<h3 id="instance-eval-amp-clas-eval"><a href="#instance-eval-amp-clas-eval" class="headerlink" title="instance_eval &amp; clas_eval"></a>instance_eval &amp; clas_eval</h3><ul>
+<li>code evaluated in <strong>correspond</strong> context (to instance or class object)</li>
+<li>both can accept <strong>block</strong> instead of string </li>
+</ul>
+<h2 id="reflect-var"><a href="#reflect-var" class="headerlink" title="reflect var"></a>reflect var</h2><ul>
+<li><code>&lt;instance&gt;.instance_variables</code></li>
+<li><code>&lt;class&gt;.class_variables</code></li>
+<li><p><code>class.constants</code></p>
+</li>
+<li><p>query: <code>eval(&quot;.. #{..} ..&quot;)</code></p>
+</li>
+<li>attr: <code>o.instance_variable_set(:@x, 0)</code> <code>o.instance_variable_get(:@x)</code>, similar <code>class_xxx</code> <code>const_xxx</code></li>
+<li>test: <code>_defined?</code> <code>_missing?</code></li>
+</ul>
+<h2 id="method"><a href="#method" class="headerlink" title="method"></a>method</h2><ul>
+<li><code>.methods</code> == <code>.public_methods</code></li>
+<li><code>.protected_methods</code> <code>.private_methods</code></li>
+<li><code>&lt;class&gt;.instance_methods</code> alternative prefix: <code>public</code> <code>protected</code> <code>private</code></li>
+<li><code>.singleton_methods</code><ul>
+<li>trivial for instance</li>
+<li>class methods for class</li>
+</ul>
+</li>
+<li><code>methods</code> gives list, with <code>(false)</code> to exclude inherited</li>
+<li><code>method(:sym)</code> to get method object<ul>
+<li><code>&lt;method&gt;.call ..</code></li>
+<li><code>&lt;object&gt;.send(:sym, ..)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="define"><a href="#define" class="headerlink" title="define"></a>define</h3><p>instance:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_method</span><span class="params">(c, m, &amp;b)</span></span></div><div class="line">  c.class_eval &#123;</div><div class="line">    <span class="comment"># private, must be inside class/module</span></div><div class="line">    <span class="comment"># `.class_eval` provides this context</span></div><div class="line">    define_method(m, &amp;b)</div><div class="line">  &#125;</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">add_method(String, <span class="symbol">:greet</span>) &#123; <span class="string">"Hello, "</span> + <span class="keyword">self</span> &#125;</div><div class="line"><span class="string">"world"</span>.greet <span class="comment"># =&gt; "Hello, world"</span></div></pre></td></tr></table></figure>
+<p>class:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_class_method</span><span class="params">(c, m, &amp;b)</span></span></div><div class="line">  eigenclass = <span class="class"><span class="keyword">class</span> &lt;&lt; c;</span> <span class="keyword">self</span>; <span class="keyword">end</span></div><div class="line">  eigenclass.class_eval &#123;</div><div class="line">    define_method(m, &amp;b)</div><div class="line">  &#125;</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">add_class_method(..)</div><div class="line">String.greet(<span class="string">"world"</span>) <span class="comment"># =&gt; "Hello, world"</span></div></pre></td></tr></table></figure>
+<p>or </p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String.define_singleton_method(<span class="symbol">:greet</span>) &#123;..&#125;</div></pre></td></tr></table></figure>
+<p>eigenclass gets the class object, recall a specified class is a instance</p>
+<h2 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h2><p>when:</p>
+<ul>
+<li>classes are subclassed</li>
+<li>modules are included</li>
+<li>methods are defined</li>
+<li>..</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><code>ed</code> method</th>
+<th>when</th>
+<th>param</th>
+<th>extra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inherited</code></td>
+<td>new class defined</td>
+<td>new class object</td>
+<td>inherited by subclass</td>
+</tr>
+<tr>
+<td><code>included</code></td>
+<td>module included</td>
+<td>class or module object included in</td>
+<td></td>
+</tr>
+<tr>
+<td><code>extended</code></td>
+<td>object extended</td>
+<td>..</td>
+<td></td>
+</tr>
+<tr>
+<td><code>method_added</code></td>
+<td>instance method</td>
+<td>:”new method name”</td>
+<td></td>
+</tr>
+<tr>
+<td><code>singleton_..</code></td>
+<td>singleton/class method</td>
+<td>:”singleton_method”</td>
+<td>self invoked when define</td>
+</tr>
+</tbody>
+</table>
+<p>others:</p>
+<ul>
+<li><code>removed/undefined</code></li>
+<li><code>singleton_removed/_undefined</code></li>
+</ul>
+<h2 id="tracing"><a href="#tracing" class="headerlink" title="tracing"></a>tracing</h2><ul>
+<li><code>__FILE__</code></li>
+<li><code>__LINE__</code></li>
+<li><code>SCRIPT_LINES__</code>: hash { filename: array of lines of source file } filled when <code>require</code> and <code>load</code><ul>
+<li>include main file: <code>SCRIPT_LINES__ = {__FILE__ =&gt; File.readlines(__FILE__)}</code></li>
+<li>refer line of code: <code>SCRIPT_LINES__[__FILE__][__LINE__-1]</code></li>
+</ul>
+</li>
+<li><code>trace_var(:var)</code>: when changed</li>
+</ul>
+<h2 id="ObjectSpace"><a href="#ObjectSpace" class="headerlink" title="ObjectSpace"></a>ObjectSpace</h2><ul>
+<li><code>.each_object</code></li>
+<li><code>.id2ref</code> inverse to <code>.object_id</code></li>
+<li>..</li>
+</ul>
+<h2 id="def-method-dynamically"><a href="#def-method-dynamically" class="headerlink" title="def method dynamically"></a>def method dynamically</h2><h3 id="class-eval"><a href="#class-eval" class="headerlink" title="class_eval"></a>class_eval</h3><p>directly interpolate identifiers into method body</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Module</span></span></div><div class="line">  private</div><div class="line">  </div><div class="line">  <span class="comment"># alias attr_reader</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">readonly</span><span class="params">(*syms)</span></span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">if</span> syms.size == <span class="number">0</span></div><div class="line">    code = <span class="string">""</span>       <span class="comment"># final code to eval</span></div><div class="line">    syms.each &#123;<span class="params">|s|</span> code &lt;&lt; <span class="string">"def <span class="subst">#&#123;s&#125;</span>; @<span class="subst">#&#123;s&#125;</span>; end\n"</span>&#125; <span class="comment"># code for getter</span></div><div class="line">    class_eval code <span class="comment"># eval to define</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="comment"># alias attr_accessor</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">readwrite</span><span class="params">(*syms)</span></span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">if</span> syms.size == <span class="number">0</span></div><div class="line">    code = <span class="string">""</span></div><div class="line">    syms.each <span class="keyword">do</span> <span class="params">|s|</span></div><div class="line">      code &lt;&lt; <span class="string">"def <span class="subst">#&#123;s&#125;</span>; @<span class="subst">#&#123;s&#125;</span>; end\n"</span></div><div class="line">      code &lt;&lt; <span class="string">"def <span class="subst">#&#123;s&#125;</span>=(val); @<span class="subst">#&#123;s&#125;</span> = val; end\n"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    class_eval code</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h3 id="define-method"><a href="#define-method" class="headerlink" title="define_method"></a>define_method</h3><p>rely on reflective methods</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Module</span></span></div><div class="line">  <span class="comment"># init INSTANCE vars with default</span></div><div class="line">  <span class="comment"># e.g: attributes x:0, y:0</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">attributes</span><span class="params">(hash)</span></span></div><div class="line">    hash.each_pair <span class="keyword">do</span> <span class="params">|symbol, default|</span></div><div class="line">      <span class="comment"># symbol name for getter/setter</span></div><div class="line">      getter = symbol</div><div class="line">      setter = <span class="symbol">:<span class="string">"<span class="subst">#&#123;symbol&#125;</span>="</span></span></div><div class="line">      <span class="comment"># symbol name for member var</span></div><div class="line">      variable = <span class="symbol">:<span class="string">"@<span class="subst">#&#123;symbol&#125;</span>"</span></span></div><div class="line">      <span class="comment"># define getter via reflective</span></div><div class="line">      define_method getter <span class="keyword">do</span></div><div class="line">        <span class="keyword">if</span> instance_variable_defined? variable</div><div class="line">          instance_variable_get variable</div><div class="line">        <span class="keyword">else</span></div><div class="line">          default</div><div class="line">        <span class="keyword">end</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">      <span class="comment"># define setter</span></div><div class="line">      define_method setter <span class="keyword">do</span> <span class="params">|val|</span></div><div class="line">        instance_variable_set variable,val</div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="comment"># init CLASS vars</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">class_attr</span><span class="params">(hash)</span></span></div><div class="line">    eigenclass = <span class="class"><span class="keyword">class</span> &lt;&lt; self;</span> <span class="keyword">self</span>; <span class="keyword">end</span></div><div class="line">    eigenclass.class_eval &#123; attributes(hash) &#125;</div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  private <span class="symbol">:attributes</span>, <span class="symbol">:class_attrs</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h2 id="DSL"><a href="#DSL" class="headerlink" title="DSL"></a>DSL</h2><blockquote>
+<p>A DSL is just an extension of Ruby syntax (with methods that look like keywords)<br>or API that allows to solve problem or represent data more naturally.</p>
+</blockquote>
+<p>XML as example utilized ruby’s:</p>
+<ol>
+<li>block</li>
+<li>parentheses-optinal invoke</li>
+<li>passing hash literals without curly braces</li>
+<li><code>method_missing</code></li>
+</ol>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">XMLGrammar</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">initialize</span><span class="params">(out)</span></span></div><div class="line">    @out = out</div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="comment"># output as CDATA</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">content</span><span class="params">(text)</span></span></div><div class="line">    @out &lt;&lt; text.to_s</div><div class="line">    <span class="literal">nil</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">comment</span><span class="params">(text)</span></span></div><div class="line">    @out &lt;&lt; <span class="string">"&lt;!-- <span class="subst">#&#123;text&#125;</span> --&gt;"</span></div><div class="line">    <span class="literal">nil</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">tag</span><span class="params">(tagname, attributes=&#123;&#125;)</span></span></div><div class="line">    <span class="comment"># open tag</span></div><div class="line">    @out &lt;&lt; <span class="string">"&lt;<span class="subst">#&#123;tagname&#125;</span>"</span></div><div class="line">    </div><div class="line">    <span class="comment"># attr</span></div><div class="line">    attributes.each &#123;<span class="params">|attr,val|</span> @out &lt;&lt; <span class="string">" <span class="subst">#&#123;attr&#125;</span>='<span class="subst">#&#123;val&#125;</span>'"</span> &#125;</div><div class="line">    </div><div class="line">    <span class="comment"># content</span></div><div class="line">    <span class="keyword">if</span> block_given?</div><div class="line">      @out &lt;&lt; <span class="string">"&gt;"</span></div><div class="line">      content = <span class="keyword">yield</span>   <span class="comment"># invoke block returned as content</span></div><div class="line">      <span class="keyword">if</span> content</div><div class="line">        @out &lt;&lt; content.to_s</div><div class="line">      <span class="keyword">end</span></div><div class="line">      <span class="comment"># close pair</span></div><div class="line">      @out &lt;&lt; <span class="string">"&lt;/<span class="subst">#&#123;tagname&#125;</span>&gt;"</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">      <span class="comment"># close single</span></div><div class="line">      @out &lt;&lt; <span class="string">"/&gt;"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    <span class="literal">nil</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="comment"># ordinary class ==&gt; DSL</span></div><div class="line">  <span class="comment"># Sol 1: &#123; any unknown method is treated as name of tag</span></div><div class="line">  <span class="keyword">alias</span> method_missing tag</div><div class="line">  <span class="comment"># &#125;</span></div><div class="line">  <span class="comment"># run block in new instance of XML class</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">generate</span><span class="params">(out, &amp;block)</span></span></div><div class="line">    XML.new(out).instance_eval(&amp;block)</div><div class="line">  <span class="keyword">end</span></div><div class="line">  </div><div class="line">  <span class="comment"># or</span></div><div class="line">  <span class="comment"># Sol2: &#123; add validation without using `method_missing`</span></div><div class="line">  </div><div class="line">  <span class="comment"># define an allowed element(tag) in one (XML) grammar</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">element</span><span class="params">(tagname, attributes=&#123;&#125;)</span></span></div><div class="line">    @allowed_attributes <span class="params">||</span>= &#123;&#125;</div><div class="line">    @allowed_attributes[tagname] = attributes</div><div class="line">    </div><div class="line">    class_eval <span class="string">%Q&#123;</span></div><div class="line">      def <span class="subst">#&#123;tagname&#125;</span>(attributes=&#123;&#125;, &amp;block)</div><div class="line">        tag(<span class="symbol">:</span><span class="comment">#&#123;tagname&#125;, attributes, &amp;block)</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment"># constants indicate type of attribute</span></div><div class="line">    OPT  = <span class="symbol">:opt</span>   <span class="comment"># optional</span></div><div class="line">    REQ  = <span class="symbol">:req</span>   <span class="comment"># required</span></div><div class="line">    BOOL = <span class="symbol">:bool</span>  <span class="comment"># value is own name</span></div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">allowed_attributes</span></span></div><div class="line">      @allowed_attributes</div><div class="line">    <span class="keyword">end</span></div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">tag</span><span class="params">(tagname, attributes=&#123;&#125;)</span></span></div><div class="line">      @out &lt;&lt; <span class="string">"&lt;<span class="subst">#&#123;tagname&#125;</span>"</span></div><div class="line"> </div><div class="line">      <span class="comment"># get allowed for current tag</span></div><div class="line">      allowed = <span class="keyword">self</span>.<span class="keyword">class</span>.allowed_attributes[tagname]</div><div class="line">      <span class="comment"># check attribute exist</span></div><div class="line">      attributes.each_pair <span class="keyword">do</span> <span class="params">|k,v|</span></div><div class="line">        raise <span class="string">"unknown attribute: <span class="subst">#&#123;k&#125;</span>"</span> unless allowed.included? k</div><div class="line">        @out &lt;&lt; <span class="string">" <span class="subst">#&#123;k&#125;</span>='<span class="subst">#&#123;v&#125;</span>'"</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">      </div><div class="line">      <span class="comment"># check attribute type</span></div><div class="line">      allowed.each_pair <span class="keyword">do</span> <span class="params">|k,v|</span></div><div class="line">        <span class="comment"># already output</span></div><div class="line">        <span class="keyword">next</span> <span class="keyword">if</span> attributes.has_key? k</div><div class="line">        <span class="keyword">if</span> (v == REQ)</div><div class="line">          raise <span class="string">"required attribute '<span class="subst">#&#123;k&#125;</span>' missing in &lt;<span class="subst">#&#123;tagname&#125;</span>&gt;"</span></div><div class="line">        <span class="keyword">elsif</span> v.is_a? String</div><div class="line">          @out &lt;&lt; <span class="string">" <span class="subst">#&#123;k&#125;</span> = '<span class="subst">#&#123;v&#125;</span>'"</span></div><div class="line">        <span class="keyword">end</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">      </div><div class="line">      <span class="keyword">if</span> block_given?</div><div class="line">        <span class="comment"># same as above</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  <span class="comment"># &#125;</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>usage example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># define</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">HTMLForm</span> &lt; XMLGrammar</span></div><div class="line">  element <span class="symbol">:form</span>, <span class="symbol">:action</span> =&gt; REQ,</div><div class="line">          <span class="symbol">:method</span> =&gt; <span class="string">"GET"</span>,</div><div class="line">          <span class="symbol">:enctype</span> =&gt; <span class="string">"application/x-www-form-urlencoded"</span>,</div><div class="line">          <span class="symbol">:name</span> =&gt; OPT</div><div class="line">  element <span class="symbol">:input</span>, <span class="symbol">:type</span> =&gt; <span class="string">"text"</span>, <span class="symbol">:name</span> =&gt; OPT, <span class="symbol">:value</span> =&gt; OPT,</div><div class="line">          <span class="symbol">:maxlength</span> =&gt; OPT, <span class="symbol">:size</span> =&gt; OPT, <span class="symbol">:src</span> =&gt; OPT,</div><div class="line">          <span class="symbol">:checked</span> =&gt; BOOL, <span class="symbol">:disabled</span> =&gt; BOOL, <span class="symbol">:readonly</span> =&gt; BOOL</div><div class="line">  element <span class="symbol">:textarea</span>, <span class="symbol">:rows</span> =&gt; REQ, <span class="symbol">:cols</span> =&gt; REQ, <span class="symbol">:name</span> =&gt; OPT,</div><div class="line">          <span class="symbol">:disabled</span> =&gt; BOOL, <span class="symbol">:readonly</span> =&gt; BOOL</div><div class="line">  element <span class="symbol">:button</span>, <span class="symbol">:name</span> =&gt; OPT, <span class="symbol">:value</span> =&gt; OPT,</div><div class="line">          <span class="symbol">:type</span> =&gt; <span class="string">"submit"</span>, <span class="symbol">:disabled</span> =&gt; OPT</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># use</span></div><div class="line">HTMLForm.generate(STDOUT) <span class="keyword">do</span></div><div class="line">  comment <span class="string">"This is a simple HTML form"</span></div><div class="line">  form <span class="symbol">:name</span> =&gt; <span class="string">"registration"</span>,</div><div class="line">       <span class="symbol">:action</span> =&gt; <span class="string">"http://www.example.com/register.cgi"</span> <span class="keyword">do</span></div><div class="line">          content <span class="string">"Name:"</span></div><div class="line">          input <span class="symbol">:name</span> =&gt; <span class="string">"name"</span></div><div class="line">          content <span class="string">"Address:"</span></div><div class="line">          textarea <span class="symbol">:name</span> =&gt; <span class="string">"address"</span>, <span class="symbol">:rows=&gt;</span><span class="number">6</span>, <span class="symbol">:cols=&gt;</span><span class="number">40</span> <span class="keyword">do</span></div><div class="line">            <span class="string">"Please enter your mailing address here"</span></div><div class="line">          <span class="keyword">end</span></div><div class="line">          button &#123; <span class="string">"Submit"</span> &#125;</div><div class="line">        <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/ruby/">ruby</a></li>
+      
+        <li><a href="/tags/note/">note</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2014/12/02/ruby-programming-language-ch7/" title="ruby programming language(ch7)">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        ruby programming language(ch7)
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <a href="/2017/04/15/papas-room/" title="Papa&#39;s room">
+      <span>
+        
+        Papa&#39;s room
+        
+      </span>
+      <i class="fa fa-long-arrow-right"></i>
+    </a>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>6</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>6</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/jquery.scrollUp.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+
+  $.scrollUp({scrollText: ''});
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>ruby programming language(ch3) | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="Ch3numberNumeric -- Integer
+    |         |-- Fixnum
+    |         `-- Bignum
+    |----- Float
+    |----- Complex*
+    |----- BigDecimal*
+    `----- R">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ruby programming language(ch3)"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css"><!-- hexo-inject:begin --><link href='/cplayer/cp.min.css' rel='stylesheet'><script src='/cplayer/cp.min.js' type='text/javascript'></script><!-- hexo-inject:end -->
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-11-26T05:30:56.000Z"><a href="/2014/11/26/ruby-programming-language-ch3/"><i>2014-11-26</i></a></time>
+      
+      
+  
+    <h1 class="title">ruby programming language(ch3)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="Ch3"><a href="#Ch3" class="headerlink" title="Ch3"></a>Ch3</h1><h2 id="number"><a href="#number" class="headerlink" title="number"></a>number</h2><pre><code>Numeric -- Integer
+    |         |-- Fixnum
+    |         `-- Bignum
+    |----- Float
+    |----- Complex*
+    |----- BigDecimal*
+    `----- Rational*
+(* as standard lib of ruby, rest built-in)
+</code></pre><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="number">1_000_000</span> == <span class="number">1000000</span></div><div class="line">-<span class="number">7</span>%<span class="number">3</span> == <span class="number">2</span> <span class="comment"># in ruby, sign comply with 2nd operand; C,Java etc. the 1st. </span></div><div class="line">-a/b == b/-a != -(a/b) <span class="comment"># ruby round to negative inf; C,Java not.</span></div></pre></td></tr></table></figure>
+<h2 id="text"><a href="#text" class="headerlink" title="text"></a>text</h2><h3 id="single-quote"><a href="#single-quote" class="headerlink" title="single-quote"></a>single-quote</h3><ul>
+<li><code>\</code> escape only <code>\</code> and <code>&#39;</code>, thus <code>a\b</code> == <code>a\\b</code></li>
+<li><code>&#39;.. \&lt;NL&gt; ..&#39;</code> has two lines, <code>\</code> <strong>NOT</strong> escape <code>\n</code></li>
+<li><code>&#39;..&#39;\&lt;NL&gt;&#39;..&#39;</code> concat lines, no introducing <code>\n</code></li>
+</ul>
+<h3 id="double-quote"><a href="#double-quote" class="headerlink" title="double-quote"></a>double-quote</h3><ul>
+<li>escape char<ul>
+<li><code>\u{code1 code2 ..}</code> escape multi unicode char at one time <strong>WITHOUT</strong> space</li>
+</ul>
+</li>
+<li>contnue line as single-quote</li>
+</ul>
+<h3 id="generalized-quoting"><a href="#generalized-quoting" class="headerlink" title="generalized quoting"></a>generalized quoting</h3><ul>
+<li><code>%q(.. no need escape here ..)</code>, <code>()</code> can be any matched <code>[]</code>, <code>{}</code>, <code>&lt;&gt;</code>, if not well-matched, <strong>NEED</strong> escape the delim</li>
+<li><code>%Q</code> the same</li>
+<li><code>%q_.. escape _ with \_ .._</code>, in case close delim (here <code>_</code>, others <code>!</code>, <code>-</code> also work) the same with open one</li>
+</ul>
+<h3 id="here-doc"><a href="#here-doc" class="headerlink" title="here doc"></a>here doc</h3><p><code>&lt;&lt;[end delim](e.g. EOF, __HERE__)</code>, no space in between <code>&lt;&lt;</code> and <code>[end delim]</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">s = &lt;&lt;HERE + &lt;&lt;THERE + <span class="string">"end"</span></div><div class="line">here</div><div class="line">HERE</div><div class="line">there</div><div class="line">THERE</div><div class="line"><span class="comment"># s = "here\nthere\nend"</span></div></pre></td></tr></table></figure>
+<ul>
+<li><code>&lt;&lt;-[end delim]</code> allow spaces before <code>[end delim]</code></li>
+<li>allow spaces in <code>[end delim]</code>, e.g. <code># # #</code></li>
+</ul>
+<h3 id="shell-command"><a href="#shell-command" class="headerlink" title="shell command:"></a>shell command:</h3><ul>
+<li><code>`&lt;shell-cmd&gt;` </code> replace with command output</li>
+<li><code>%x&lt;shell-cmd&gt;</code> , either</li>
+</ul>
+<p>example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">listcmd = win ? <span class="string">'dir'</span><span class="symbol">:<span class="string">'ls'</span></span></div><div class="line">listing = <span class="string">`<span class="subst">#&#123;listcmd&#125;</span>`</span></div><div class="line"><span class="comment"># or</span></div><div class="line">listing = Kernel.<span class="string">`(listcmd)</span></div></pre></td></tr></table></figure>
+<h3 id="single-char"><a href="#single-char" class="headerlink" title="single char"></a>single char</h3><ul>
+<li><code>?&lt;ch&gt;</code>, <code>&lt;ch&gt;</code> can be any ascii code or unicode <code>\uxxx</code> or oct or hex or <code>\C-x</code>(ctrl-x, other similarly)</li>
+</ul>
+<h3 id="operation-on-string"><a href="#operation-on-string" class="headerlink" title="operation on string"></a>operation on string</h3><ul>
+<li><code>&lt;&lt;</code> to append, <code>*</code> to repeat</li>
+<li><code>[]</code> index the exact unicode char <strong>NOT</strong> the codes in bytes<ul>
+<li><code>[] = ?x</code> change with single char</li>
+<li><code>[] = &quot;..&quot;</code> with string</li>
+<li><code>[]</code> can be any integral pos(positive/negative), range, or regex</li>
+</ul>
+</li>
+<li><code>&lt;string&gt;.size == &lt;string&gt;.length ?= &lt;string&gt;.bytesize(care unicode)</code></li>
+</ul>
+<h2 id="array"><a href="#array" class="headerlink" title="array"></a>array</h2><ul>
+<li><code>%w</code> like <code>%q</code> create array literal in <strong>STRING</strong></li>
+<li><code>&lt;array&gt;.size == &lt;array&gt;.length</code></li>
+</ul>
+<h3 id="operation"><a href="#operation" class="headerlink" title="operation"></a>operation</h3><ul>
+<li><code>+</code>: concat <strong>BOTH</strong> array</li>
+<li><code>-</code>: set diff</li>
+<li><code>&lt;&lt;</code>: append</li>
+<li><code>*</code>: repeat</li>
+<li><code>|</code>: union (order kept)</li>
+<li><code>&amp;</code>: intersect (order kept)</li>
+<li><code>[]</code>: access, slice, assign as string</li>
+</ul>
+<h2 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h2><p>simple symbol style representation:</p>
+<p><code>numbers = { one: 1, two: 2, three: 3}</code></p>
+<p>complex:</p>
+<p><code>numbers = {:one =&gt; 1, :two =&gt; 2, :three =&gt; 3}</code> <strong>DIFF</strong> with <code>numbers = {&quot;one&quot; =&gt; 1, &quot;two&quot; =&gt; 2, &quot;three&quot; =&gt; 3}</code></p>
+<ul>
+<li>hash keys compare with <code>eql?</code>(<code>==</code> in most cases)</li>
+<li>if <code>eql?</code> not provided, <strong>object_id</strong> is used via <code>hash</code> method; if <code>hash</code> not provided, that cannot be a hash key</li>
+<li>hashcode of mutable object changes when its content changes, thus hashes corrupt; or <code>rehash</code> to rescue</li>
+<li><code>sring</code> is a special case handled though it’s mutable</li>
+</ul>
+<h2 id="range"><a href="#range" class="headerlink" title="range"></a>range</h2><p><strong>!=</strong> array</p>
+<ul>
+<li>literals<ul>
+<li><code>a..b</code>: [a,b]</li>
+<li><code>a..b</code>: [a, b)</li>
+</ul>
+</li>
+<li>variables:<ul>
+<li><code>x..x*2</code></li>
+</ul>
+</li>
+</ul>
+<p>only discrete range is iteratable, otherwise use <code>range.step() {..}</code></p>
+<p>conv:</p>
+<ul>
+<li><code>r.to_s</code>, <code>r.to_a</code></li>
+<li>care the trap: <code>1..3.to_a</code></li>
+</ul>
+<h3 id="membership"><a href="#membership" class="headerlink" title="membership"></a>membership</h3><ul>
+<li><code>.member?</code> == <code>.include?</code></li>
+<li><code>.cover?</code> check if fit in the (dict-)sorted list from range_begin to range_end, so it <strong>ALWAYS</strong> use continous test, while <code>.member?</code> and <code>.include?</code> use continous when range ends are numbers, or fall to discreate when not numeric:<ul>
+<li><code>triples = &quot;AAA&quot;..&quot;ZZZ&quot;</code></li>
+<li><code>triples.include? &quot;ABC&quot;</code>: true and slow</li>
+<li><code>triples.include? &quot;ABCD&quot;</code>: false and slow</li>
+<li><code>triples.cover? &quot;ABCD&quot;</code>: true and fast</li>
+</ul>
+</li>
+</ul>
+<h3 id="flip-flop-Ch4"><a href="#flip-flop-Ch4" class="headerlink" title="flip-flop (@Ch4)"></a>flip-flop (@Ch4)</h3><p>take an example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">DATA.each <span class="keyword">do</span> <span class="params">|line|</span></div><div class="line">  <span class="keyword">if</span> line =~ <span class="regexp">/start/</span> .. line =~ <span class="regexp">/end/</span></div><div class="line">    puts line</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># prints line between "start" and "end"(include), so flip-flop works with STATE memory</span></div></pre></td></tr></table></figure>
+<h2 id="symbol"><a href="#symbol" class="headerlink" title="symbol"></a>symbol</h2><p>equal representation:</p>
+<ul>
+<li><code>:sym</code></li>
+<li><code>:&quot;sym&quot;</code>, quote also can be used as <code>:&quot;s y m&quot;</code> to include spaces</li>
+<li><code>:&quot;#{s}&quot; # s = &quot;sym&quot;</code></li>
+<li><code>%s[sym]</code></li>
+</ul>
+<p>conv:</p>
+<ul>
+<li>to string: <code>.to_s</code>, <code>.id2name</code></li>
+<li>from_string: <code>.to_sym</code>, <code>.intern</code></li>
+</ul>
+<p>reflective:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> o.respond_to? <span class="symbol">:size</span></div><div class="line">  o.send name</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h2 id="object"><a href="#object" class="headerlink" title="object"></a>object</h2><h3 id="true-false"><a href="#true-false" class="headerlink" title="true/false"></a>true/false</h3><ul>
+<li>only <code>nil</code> and <code>false</code> give <strong>LOGICAL</strong> false if <code>if</code>, while <code>0</code>, <code>&quot;&quot;</code> give true</li>
+<li><code>a &amp;&amp; b</code> gives:<ul>
+<li><code>a</code> if a is <code>nil</code> or <code>false</code></li>
+<li><code>b</code> otherwise</li>
+</ul>
+</li>
+<li><code>=</code> is prior to <code>and</code>, <code>or</code>, so <code>if a = foo and b = bar</code> is ok, while not work with <code>&amp;&amp;</code>, <code>||</code></li>
+</ul>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><ul>
+<li><code>x.class</code>, <code>instance_of?</code> exact class, <strong>NO</strong> inheritance check</li>
+<li><code>is_a?</code>, <code>kind_of?</code> works with inheritance and mixin</li>
+</ul>
+<h3 id="equality"><a href="#equality" class="headerlink" title="equality"></a>equality</h3><ul>
+<li><code>equal?</code> check exact object reference(object_id)</li>
+<li><code>==</code> content identical, has casting, usually override<ul>
+<li>array: # same, each item compare with <code>==</code></li>
+<li>hash: # of k-v same, key compare with <code>eql?</code>, value with <code>==</code></li>
+</ul>
+</li>
+<li><code>eql?</code> strict version of <code>==</code>, no casting, <code>eql?</code> requires <code>hash</code> method return same value, so must rewrite <code>hash</code> when define <code>eql?</code></li>
+<li><code>===</code> <em>case</em> equality<ul>
+<li>most classes define <code>===</code> using <code>==</code></li>
+<li><code>(1..10) === 5</code> true</li>
+<li><code>/\d+/ === 123</code> true</li>
+<li><code>String === &quot;s&quot;</code> true</li>
+</ul>
+</li>
+<li><code>=~</code> defined by <strong>String</strong> and <strong>Regexp</strong>, <strong>Object</strong> always return false; <code>!~</code> as inverse</li>
+<li><code>&lt;=&gt;</code> if less, -1; elif equal, 0; else 1</li>
+</ul>
+<h3 id="cast"><a href="#cast" class="headerlink" title="cast"></a>cast</h3><p>on <strong>coerce</strong>:</p>
+<p>take example:</p>
+<ol>
+<li><code>1.5 * Rational(1,3)</code>, equals to <code>(1.5).*(Rational(1,3))</code>, Float * Rational</li>
+<li>invoke <code>Rational(1,3).coerce(1.5)</code>, since <code>1.5</code> does not know about <code>Rational(1,3)</code></li>
+<li>result as array <code>[Rational(1.5), Rational(1,3)]</code> where <code>1.5</code> get to Rational</li>
+<li>then invoke <code>*</code></li>
+<li>useful when customizing class</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/ruby/">ruby</a></li>
+      
+        <li><a href="/tags/note/">note</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2014/11/25/ruby-programming-language-ch1-2/" title="ruby programming language(ch1-2)">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        ruby programming language(ch1-2)
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <a href="/2014/11/26/ruby-programming-language-ch4-5/" title="ruby programming language(ch4-5)">
+      <span>
+        
+        ruby programming language(ch4-5)
+        
+      </span>
+      <i class="fa fa-long-arrow-right"></i>
+    </a>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>6</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>6</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/jquery.scrollUp.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+
+  $.scrollUp({scrollText: ''});
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</body>
+</html>

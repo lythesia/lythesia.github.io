@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>ruby programming language(ch6) | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="Ch6methodsingleton method12345o = &quot;some object&quot;def o.echo  puts selfendo.echo # invoke
+aliasalias &amp;lt;new&amp;gt; &amp;lt;origin&amp;gt;
+take an example:
+12345678">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ruby programming language(ch6)"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css"><!-- hexo-inject:begin --><link href='/cplayer/cp.min.css' rel='stylesheet'><script src='/cplayer/cp.min.js' type='text/javascript'></script><!-- hexo-inject:end -->
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-11-28T13:16:28.000Z"><a href="/2014/11/28/ruby-programming-language-ch6/"><i>2014-11-28</i></a></time>
+      
+      
+  
+    <h1 class="title">ruby programming language(ch6)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="Ch6"><a href="#Ch6" class="headerlink" title="Ch6"></a>Ch6</h1><h2 id="method"><a href="#method" class="headerlink" title="method"></a>method</h2><h3 id="singleton-method"><a href="#singleton-method" class="headerlink" title="singleton method"></a>singleton method</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">o = <span class="string">"some object"</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">o</span>.<span class="title">echo</span></span></div><div class="line">  puts <span class="keyword">self</span></div><div class="line"><span class="keyword">end</span></div><div class="line">o.echo <span class="comment"># invoke</span></div></pre></td></tr></table></figure>
+<h3 id="alias"><a href="#alias" class="headerlink" title="alias"></a>alias</h3><p><code>alias &lt;new&gt; &lt;origin&gt;</code></p>
+<p>take an example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span></span></div><div class="line">  <span class="comment"># ..</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">alias</span> real_foo foo</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span></span></div><div class="line">  <span class="comment"># ..</span></div><div class="line">  real_foo <span class="comment"># it's ok</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h3 id="default-argument"><a href="#default-argument" class="headerlink" title="default argument"></a>default argument</h3><ul>
+<li>default arguments must be <strong>adjacent</strong></li>
+<li>left-to-right assign</li>
+</ul>
+<h3 id="block-as-argument"><a href="#block-as-argument" class="headerlink" title="block as argument"></a>block as argument</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(.., &amp;b)</span></span></div><div class="line">  <span class="comment"># ..</span></div><div class="line">  b.call(..) <span class="comment"># &amp;b get to a Proc object, this replaces yield</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<ul>
+<li>block argument and real block <strong>cannot</strong> be given at same time</li>
+</ul>
+<h3 id="proc-as-argument"><a href="#proc-as-argument" class="headerlink" title="proc as argument"></a>proc as argument</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">p = Proc.new &#123;..&#125;</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(.., p)</span></span> <span class="keyword">end</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(.., &amp;b)</span></span> <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># invoke</span></div><div class="line">foo(.., p)</div><div class="line">foo(.., &amp;p)</div></pre></td></tr></table></figure>
+<h3 id="using-amp"><a href="#using-amp" class="headerlink" title="using &amp;"></a>using &amp;</h3><ul>
+<li>method symbol has <code>.to_proc</code> to Proc object</li>
+<li><code>&amp;</code> before Proc object make it applicapable by iterator, <code>lst.map &amp;:upcase</code></li>
+<li><code>&amp;:sym</code> = <code>&amp;:sym.to_proc</code> in invocation</li>
+</ul>
+<h2 id="Proc-amp-Lambda"><a href="#Proc-amp-Lambda" class="headerlink" title="Proc &amp; Lambda"></a>Proc &amp; Lambda</h2><ul>
+<li>both <code>is-a</code> <strong>Proc</strong></li>
+<li>== only via <code>dup,clone</code></li>
+</ul>
+<h3 id="create-proc"><a href="#create-proc" class="headerlink" title="create proc"></a>create proc</h3><p>from block:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeproc</span><span class="params">(&amp;p)</span></span></div><div class="line">  p</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>or:</p>
+<ul>
+<li><code>Proc.new</code></li>
+<li>lambda<ul>
+<li><code>succ = lambda {|x| x+1}</code></li>
+<li><code>succ = -&gt;(x){ x+1 }</code></li>
+<li><code>f = -&gt;(x,y; i,j,k) {..}</code> or <code>f = -&gt; x,y; i,j,k {..}</code> arg: x,y; local-var: i,j,k (minial lambda: <code>-&gt;{}</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="invoke"><a href="#invoke" class="headerlink" title="invoke"></a>invoke</h3><p>for both proc and lambda:</p>
+<ul>
+<li><code>f.call (..)</code></li>
+<li><code>f[..]</code></li>
+<li><code>f.(..)</code></li>
+</ul>
+<h3 id="diff"><a href="#diff" class="headerlink" title="diff"></a>diff</h3><h4 id="return"><a href="#return" class="headerlink" title="return"></a>return</h4><p>proc:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeproc</span><span class="params">(msg)</span></span></div><div class="line">  p = Proc.new &#123; puts msg; <span class="keyword">return</span> &#125; <span class="comment"># return to makeproc</span></div><div class="line">  puts <span class="string">"return from proc"</span></div><div class="line">  p   <span class="comment"># but already return to caller(here test)</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span></span></div><div class="line">  puts <span class="string">"enter method"</span></div><div class="line">  p = makeproc <span class="string">"enter proc"</span></div><div class="line">  p.call</div><div class="line">  puts <span class="string">"exit method"</span>  <span class="comment"># so never executed</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">test</div><div class="line"><span class="comment"># enter method</span></div><div class="line"><span class="comment"># return from proc</span></div><div class="line"><span class="comment"># enter proc</span></div><div class="line"><span class="comment"># &gt;&gt; LocalJumpError</span></div></pre></td></tr></table></figure>
+<p>lambda:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">makelambda</span><span class="params">(msg)</span></span> .. <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span> .. <span class="title">end</span></span></div><div class="line"></div><div class="line">test</div><div class="line"><span class="comment"># enter method</span></div><div class="line"><span class="comment"># return from lambda</span></div><div class="line"><span class="comment"># enter lambda</span></div><div class="line"><span class="comment"># exit method</span></div><div class="line"><span class="comment"># (no LocalJumpError)</span></div></pre></td></tr></table></figure>
+<h4 id="break"><a href="#break" class="headerlink" title="break"></a>break</h4><ul>
+<li>proc: as block break out whole iterator</li>
+<li>lambda: normal break, only make sense within enclosing loop or iteration</li>
+</ul>
+<h4 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h4><ul>
+<li>proc: no number match, auto pack/unpack, life easier</li>
+<li>lambda: exact match, no auto splat</li>
+</ul>
+<h2 id="closure"><a href="#closure" class="headerlink" title="closure"></a>closure</h2><ul>
+<li>proc and lambda are <strong>closures</strong></li>
+<li>closure possess the <strong>copy</strong> of local context when <strong>created</strong></li>
+<li>alter via binding: <ol>
+<li><code>def foo(n); lambda {..}; end</code></li>
+<li>then <code>f2 = foo(2)</code> </li>
+<li>f2 can altered to <code>eval(&quot;n=3&quot;, f2)</code> or <code>eval(&quot;n=3&quot;, f2.binding)</code> (complete form)</li>
+</ol>
+</li>
+</ul>
+<h2 id="method-object"><a href="#method-object" class="headerlink" title="method object"></a>method object</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">m = <span class="number">0</span>.method <span class="symbol">:succ</span></div><div class="line"></div><div class="line">m.call <span class="keyword">or</span> m[]</div></pre></td></tr></table></figure>
+<p><strong>not</strong> closure</p>
+<p>unbound method object:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">unbound_plus = Fixnum.instance_method <span class="string">"+"</span></div><div class="line">plus_2 = unbound_plus.bind <span class="number">2</span></div><div class="line">plus_2[<span class="number">2</span>] <span class="comment"># =&gt; 4</span></div><div class="line">plus_3 = plus_2.unbound.bind <span class="number">3</span></div></pre></td></tr></table></figure>
+<h2 id="functional"><a href="#functional" class="headerlink" title="functional"></a>functional</h2><h3 id="enumerable-as-example"><a href="#enumerable-as-example" class="headerlink" title="enumerable as example"></a>enumerable as example</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">Functional</span></span></div><div class="line">  <span class="comment"># some_method | enumerable: apply some_method to enumerable as map</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span><span class="params">(enum)</span></span></div><div class="line">    enum.map &amp;<span class="keyword">self</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  <span class="keyword">alias</span> <span class="params">| apply</span></div><div class="line"></div><div class="line">  # some_method &lt;= enumerable: .. as reduce</div><div class="line">  def reduce(enum)</div><div class="line">    enum.inject &amp;<span class="keyword">self</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  <span class="keyword">alias</span> &lt;= reduce</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"># mixin to Proc &amp; Method</div><div class="line"><span class="keyword">class</span> Proc; <span class="keyword">include</span> Functional; <span class="keyword">end</span></div><div class="line"><span class="keyword">class</span> Method; <span class="keyword">include</span> Functional; <span class="keyword">end</span></div><div class="line"></div><div class="line"># take standard deriv as example</div><div class="line">stddev = -&gt; a &#123; </div><div class="line">  sum = -&gt; x,y &#123; x+y &#125;</div><div class="line">  mean = (sum &lt;= a) / a.size # <span class="keyword">if</span> you want to make it lambda, should <span class="keyword">ensure</span> it can refer `a` <span class="keyword">in</span> invoking deriv</div><div class="line">  deriv = -&gt; x &#123; x - mean &#125;</div><div class="line">  square = -&gt; x &#123; x*x &#125;</div><div class="line">  Math.sqrt( (sum &lt;= square|(deriv<span class="params">|a)) / (a.size - 1) ) </span></div><div class="line">&#125;</div><div class="line"></div><div class="line">stddev[[1,2,3,4]]</div><div class="line"># =&gt; 1.2909944487358056</div></pre></td></tr></table></figure>
+<h3 id="compose"><a href="#compose" class="headerlink" title="compose"></a>compose</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">compose</span> <span class="title">f</span></span></div><div class="line">  <span class="keyword">if</span> <span class="keyword">self</span>.respond_to?(<span class="symbol">:arity</span>) &amp;&amp; <span class="keyword">self</span>.arity == <span class="number">1</span></div><div class="line">    -&gt; &#123;<span class="params">|*args|</span> <span class="keyword">self</span>[f[*args]]&#125;</div><div class="line">  <span class="keyword">else</span></div><div class="line">    -&gt; &#123;<span class="params">|*args|</span> <span class="keyword">self</span>[*f[*args]]&#125; <span class="comment"># handles more than one args, if self is defined like that</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="keyword">alias</span> * compose</div></pre></td></tr></table></figure>
+<h3 id="partial-apply"><a href="#partial-apply" class="headerlink" title="partial apply"></a>partial apply</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">apply_head</span><span class="params">(*first)</span></span>; -&gt; *rest &#123; <span class="keyword">self</span>[*first.concat rest] &#125;; <span class="keyword">end</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">apply_tail</span><span class="params">(*last)</span></span>; -&gt; *rest &#123; <span class="keyword">self</span>[*rest.concat last] &#125;; <span class="keyword">end</span></div><div class="line"><span class="keyword">alias</span> <span class="meta">&gt;&gt; </span>apply_head</div><div class="line"><span class="keyword">alias</span> &lt;&lt; apply_tail</div><div class="line"></div><div class="line">g = f <span class="meta">&gt;&gt; </span><span class="number">2</span> <span class="comment"># set 1st arg to 2</span></div><div class="line">g = f &lt;&lt; <span class="number">2</span> <span class="comment"># set last arg to 2</span></div></pre></td></tr></table></figure>
+<h3 id="memorize"><a href="#memorize" class="headerlink" title="memorize"></a>memorize</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">memoize</span></span></div><div class="line">  cache = &#123;&#125; <span class="comment"># An empty cache. The lambda captures this in its closure.</span></div><div class="line">  lambda &#123;<span class="params">|*args|</span></div><div class="line">      <span class="comment"># notice that the hash key is the entire array of arguments!</span></div><div class="line">    unless cache.has_key?(args) <span class="comment"># If no cached result for these args</span></div><div class="line">      cache[args] = <span class="keyword">self</span>[*args] <span class="comment"># Compute and cache the result</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    cache[args] <span class="comment"># Return result from cache</span></div><div class="line">  &#125;</div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="comment"># A (probably unnecessary) unary + operator for memoization</span></div><div class="line"><span class="comment"># Mnemonic: the + operator means "improved"</span></div><div class="line"><span class="keyword">alias</span> +@ memoize <span class="comment"># cached_f = +f @ for prefix unary</span></div></pre></td></tr></table></figure>
+<p>example: </p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># recursive</span></div><div class="line">factorial = -&gt;x &#123;..&#125;.memorize <span class="keyword">or</span> +lambda &#123;<span class="params">|x|</span>..&#125; <span class="comment"># ok, cached</span></div><div class="line">factorial = -&gt;x &#123;..&#125;; cached_f = +factorial      <span class="comment"># not cached, only you called each x once, that x is cahced!</span></div></pre></td></tr></table></figure>
+<h3 id="with-symbol"><a href="#with-symbol" class="headerlink" title="with symbol"></a>with symbol</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ..</span></div><div class="line"><span class="keyword">alias</span> [] bind</div><div class="line">String[<span class="symbol">:reverse</span>][<span class="string">"hello"</span>][] <span class="comment"># =&gt; "olleh"</span></div><div class="line"><span class="comment">#   unbound     bind-to  invoke</span></div><div class="line"><span class="comment">#   method      "hello"</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/ruby/">ruby</a></li>
+      
+        <li><a href="/tags/note/">note</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2014/11/26/ruby-programming-language-ch4-5/" title="ruby programming language(ch4-5)">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        ruby programming language(ch4-5)
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <a href="/2014/12/02/ruby-programming-language-ch7/" title="ruby programming language(ch7)">
+      <span>
+        
+        ruby programming language(ch7)
+        
+      </span>
+      <i class="fa fa-long-arrow-right"></i>
+    </a>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>6</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>6</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/jquery.scrollUp.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+
+  $.scrollUp({scrollText: ''});
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</body>
+</html>

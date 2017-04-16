@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>ruby programming language(ch4-5) | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="Ch4parallel assign
+x,y,z = 1,2,3 same as x,y,z = [1,2,3] or x,y,z=*[1,2,3](splat)
+swap: x,y = y,x(like python)
+lvalues can only have one splat:
+*x,y =">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ruby programming language(ch4-5)"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css"><!-- hexo-inject:begin --><link href='/cplayer/cp.min.css' rel='stylesheet'><script src='/cplayer/cp.min.js' type='text/javascript'></script><!-- hexo-inject:end -->
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-11-26T07:56:30.000Z"><a href="/2014/11/26/ruby-programming-language-ch4-5/"><i>2014-11-26</i></a></time>
+      
+      
+  
+    <h1 class="title">ruby programming language(ch4-5)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="Ch4"><a href="#Ch4" class="headerlink" title="Ch4"></a>Ch4</h1><h2 id="parallel-assign"><a href="#parallel-assign" class="headerlink" title="parallel assign"></a>parallel assign</h2><ul>
+<li><code>x,y,z = 1,2,3</code> same as <code>x,y,z = [1,2,3]</code> or <code>x,y,z=*[1,2,3]</code>(splat)</li>
+<li>swap: <code>x,y = y,x</code>(like python)</li>
+<li>lvalues can only have one splat:<ul>
+<li><code>*x,y = 1,2,3</code>  [1,2],3</li>
+<li><code>x,y,*z = 1,*[2,3,4]</code> 1,2,[3,4]</li>
+<li><code>x,y,z = 1,[2,3]</code> 1,[2,3],nil, but <code>x,y,z=1,*[2,3]</code> 1,2,3</li>
+<li><code>*</code> on lvalue as compress, on rvalue as decompress</li>
+</ul>
+</li>
+</ul>
+<h2 id="flip-flop"><a href="#flip-flop" class="headerlink" title="flip-flop"></a>flip-flop</h2><ul>
+<li><code>(1..10).each {|x| print x if x==3..x&gt;=3}</code> 3 because <code>..</code> does evaluation and righthand expr check(to flop out) at same time</li>
+<li><code>(1..10).each {|x| print x if x==3...x&gt;=3}</code> 34 because <code>...</code> waits evaluation first, then check and flop out</li>
+</ul>
+<h2 id="oneline-expr"><a href="#oneline-expr" class="headerlink" title="oneline expr"></a>oneline expr</h2><ul>
+<li><code>(expr) if (expr)</code></li>
+<li>(in python <code>(expr) if (expr) else (expr)</code> valid, while not in ruby)</li>
+</ul>
+<h1 id="Ch5"><a href="#Ch5" class="headerlink" title="Ch5"></a>Ch5</h1><h2 id="condition"><a href="#condition" class="headerlink" title="condition"></a>condition</h2><h3 id="if-modifier"><a href="#if-modifier" class="headerlink" title="if modifier"></a>if modifier</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">begin</span></div><div class="line">  line1</div><div class="line">  line2</div><div class="line"><span class="keyword">end</span> <span class="keyword">if</span> expr</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">( line1</div><div class="line">  line2 ) <span class="keyword">if</span> expr</div></pre></td></tr></table></figure>
+<h3 id="unless"><a href="#unless" class="headerlink" title="unless"></a>unless</h3><ul>
+<li>if-not</li>
+<li>no allow <code>elsif</code></li>
+</ul>
+<h3 id="case"><a href="#case" class="headerlink" title="case"></a>case</h3><ul>
+<li><code>case [when+] end</code> no need <code>break</code></li>
+<li>can be used as expr value: <code>x = (case .. end)</code></li>
+</ul>
+<h3 id="while-until-as-modifier"><a href="#while-until-as-modifier" class="headerlink" title="while/until as modifier"></a>while/until as modifier</h3><ul>
+<li><code>expr while(until) expr</code></li>
+<li>or as <code>if</code></li>
+</ul>
+<h2 id="iterate"><a href="#iterate" class="headerlink" title="iterate"></a>iterate</h2><ul>
+<li>integral: <code>.upto</code>, <code>.downto</code>, <code>.times</code></li>
+<li><p>continous: <code>start.step(end, step)</code></p>
+</li>
+<li><p><code>.collect</code> (like <code>.map</code>?) traversal and process each</p>
+</li>
+<li><code>.select</code> out subset meet requirements, <code>.reject</code> as inverse</li>
+<li><code>.inject</code> as reduce</li>
+</ul>
+<h3 id="custom"><a href="#custom" class="headerlink" title="custom"></a>custom</h3><ul>
+<li><code>yield</code> values to block as parameter, say invoke the block with yielded values</li>
+<li><code>if block_given?</code> to determine whether invoke or not</li>
+<li>return as enumerator: <code>self.to_enum(:yout_yield_method)</code>, which can then invoke <code>.each</code>, etc.</li>
+<li>as external iterator: <code>loop {iterator.next}</code>, which raise <strong>StopIteration</strong></li>
+</ul>
+<h2 id="alter-control-flow"><a href="#alter-control-flow" class="headerlink" title="alter control flow"></a>alter control flow</h2><ul>
+<li><code>return</code>: allow return multi values from block, but jumps out of current enclosing method, thus return values as method values</li>
+<li><code>break</code>: like <code>return</code> can have a value, but jumps out of whole iteration but not method scope</li>
+<li><code>next</code>: allow return values, jumps out current iteration</li>
+<li><code>redo</code>: restart current iteration, skipping checking the condition</li>
+</ul>
+<h2 id="exception"><a href="#exception" class="headerlink" title="exception"></a>exception</h2><h3 id="raise"><a href="#raise" class="headerlink" title="raise"></a>raise</h3><ul>
+<li><code>raise &quot;bad argument&quot; if &lt;cond&gt;</code></li>
+<li><code>raise RuntimeError, &quot;bad argument&quot; if &lt;cond&gt;</code></li>
+<li><code>raise RuntimeError.new &quot;bad argument&quot; if &lt;cond&gt;</code></li>
+<li><code>raise RuntimeError.exception &quot;bad argument&quot; if &lt;cond&gt;</code></li>
+</ul>
+<h3 id="rescue"><a href="#rescue" class="headerlink" title="rescue"></a>rescue</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">begin</span></div><div class="line">  <span class="comment"># code may raise exception</span></div><div class="line"><span class="keyword">rescue</span> =&gt; e <span class="comment"># global var $! also handles it</span></div><div class="line">  <span class="comment"># handle it</span></div><div class="line"><span class="keyword">else</span> </div><div class="line">  <span class="comment"># other uncatched</span></div><div class="line"><span class="keyword">ensure</span></div><div class="line">  <span class="comment"># always run</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>variables in <code>rescue</code> scope are visiable to rest after</p>
+<ul>
+<li><code>rescue Exception</code></li>
+<li><code>rescue ArgumentError =&gt; e</code></li>
+<li><code>rescue ArgumentError, TypeError =&gt; e</code> or-match</li>
+</ul>
+<p>as modifier: <code>y = factorial(x) rescue 0</code>, handles any <strong>StandardError</strong> and return the default follows <code>rescue</code></p>
+<h2 id="BEGIN-END"><a href="#BEGIN-END" class="headerlink" title="BEGIN/END"></a>BEGIN/END</h2><ul>
+<li><code>BEGIN {..}</code> executes before anything else only once without considering conditions</li>
+<li><code>END {..}</code> consider conditions; first register(encounter), last execute; only once even in loop</li>
+</ul>
+<hr>
+<h2 id="thread"><a href="#thread" class="headerlink" title="thread"></a>thread</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">readfiles</span><span class="params">(filenames)</span></span></div><div class="line">  threads = filenames.map <span class="keyword">do</span> <span class="params">|f|</span></div><div class="line">    Thread.new &#123; File.read(f) &#125; <span class="comment"># return value of block stores in thread.value, which is a sync method(will block if not complete)</span></div><div class="line">  <span class="keyword">end</span></div><div class="line">  threads.map &#123;<span class="params">|t|</span> t.value&#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h2 id="fiber"><a href="#fiber" class="headerlink" title="fiber"></a>fiber</h2><p>lightweight thread</p>
+<h3 id="normal"><a href="#normal" class="headerlink" title="normal"></a>normal</h3><ul>
+<li><code>require &#39;fiber&#39;</code></li>
+<li><code>.yield</code> transfers control back to caller, <code>.resume</code> to return</li>
+</ul>
+<p>example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">f = Fiber.new &#123;</div><div class="line">  puts <span class="string">"fiber hel"</span>  <span class="comment"># 3.</span></div><div class="line">  Fiber.<span class="keyword">yield</span>       <span class="comment"># 4. goto line 9</span></div><div class="line">  puts <span class="string">"fiber bye"</span>  <span class="comment"># 7. goto line 11</span></div><div class="line">&#125;</div><div class="line">  </div><div class="line">puts <span class="string">"caller hel"</span>   <span class="comment"># 1.</span></div><div class="line">f.resume            <span class="comment"># 2. goto line 2</span></div><div class="line">puts <span class="string">"caller bye"</span>   <span class="comment"># 5.</span></div><div class="line">f.resume            <span class="comment"># 6. goto line 4</span></div><div class="line"><span class="comment"># end</span></div><div class="line">  </div><div class="line"><span class="comment"># results:</span></div><div class="line"><span class="comment"># caller hel</span></div><div class="line"><span class="comment"># fiber hel</span></div><div class="line"><span class="comment"># caller bye</span></div><div class="line"><span class="comment"># fiber bye</span></div></pre></td></tr></table></figure>
+<p>diff with <code>yield</code> in iteration:</p>
+<ul>
+<li>fiber yields to caller</li>
+<li>iter yields to block</li>
+</ul>
+<h3 id="with-arguments-amp-return-values"><a href="#with-arguments-amp-return-values" class="headerlink" title="with arguments &amp; return values"></a>with arguments &amp; return values</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">f = Fiber.new <span class="keyword">do</span> <span class="params">|msg|</span></div><div class="line">  puts <span class="string">"caller: <span class="subst">#&#123;msg&#125;</span>"</span></div><div class="line">  msg2 = Fiber.<span class="keyword">yield</span> <span class="string">"hel"</span></div><div class="line">  puts <span class="string">"caller: <span class="subst">#&#123;msg2&#125;</span>"</span></div><div class="line">  <span class="string">"fine"</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">response = f.resume <span class="string">"hel"</span></div><div class="line">puts <span class="string">"fiber: <span class="subst">#&#123;response&#125;</span>"</span></div><div class="line">response2 = f.resume <span class="string">"how are you"</span> <span class="comment"># "how are you" as the value of Fiber.yield</span></div><div class="line">puts <span class="string">"fiber: <span class="subst">#&#123;response2&#125;</span>"</span></div><div class="line"></div><div class="line"><span class="comment"># results:</span></div><div class="line"><span class="comment"># caller: hel</span></div><div class="line"><span class="comment"># fiber: hel</span></div><div class="line"><span class="comment"># caller: how are you</span></div><div class="line"><span class="comment"># fiber: fine</span></div></pre></td></tr></table></figure>
+<h3 id="transfer"><a href="#transfer" class="headerlink" title="transfer"></a>transfer</h3><p>unlike thread, fibers must be explicitly scheduled via <code>transfer</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">f = Fiber.new &#123;<span class="params">|..|</span> g.transfer(..)&#125; <span class="comment"># transfer contorl from f to g with arguments</span></div><div class="line">g = Fiber.new &#123;..&#125;</div></pre></td></tr></table></figure>
+<h2 id="continuation"><a href="#continuation" class="headerlink" title="continuation"></a>continuation</h2><p>performs jump(goto)</p>
+<p>take example:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">$line = &#123;&#125; <span class="comment"># global hash for store jump lables</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">line</span><span class="params">(symbol)</span></span></div><div class="line">  callcc &#123;<span class="params">|c|</span> $lines[symbol] = c&#125; <span class="comment"># make a continuation related to label</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">goto</span><span class="params">(symbol)</span></span></div><div class="line">  $lines[symbol].call <span class="comment"># return to caller label</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># now applying goto</span></div><div class="line">i = <span class="number">0</span></div><div class="line">line <span class="number">10</span> <span class="comment"># 10 is a label can be anyone else</span></div><div class="line">puts i += <span class="number">1</span></div><div class="line">goto <span class="number">10</span> <span class="keyword">if</span> i &lt; <span class="number">5</span> <span class="comment"># jump</span></div><div class="line"></div><div class="line">line <span class="number">20</span> <span class="comment"># same</span></div><div class="line">puts i -= <span class="number">1</span></div><div class="line">goto <span class="number">20</span> <span class="keyword">if</span> i &gt; <span class="number">0</span> <span class="comment"># jump</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/ruby/">ruby</a></li>
+      
+        <li><a href="/tags/note/">note</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2014/11/26/ruby-programming-language-ch3/" title="ruby programming language(ch3)">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        ruby programming language(ch3)
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <a href="/2014/11/28/ruby-programming-language-ch6/" title="ruby programming language(ch6)">
+      <span>
+        
+        ruby programming language(ch6)
+        
+      </span>
+      <i class="fa fa-long-arrow-right"></i>
+    </a>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>6</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>6</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/jquery.scrollUp.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+
+  $.scrollUp({scrollText: ''});
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</body>
+</html>
