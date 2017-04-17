@@ -134,15 +134,13 @@
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/jquery.scrollUp.min.js"></script>
-<script src="/js/gallery.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery.imagesloaded/4.1.1/imagesloaded.pkgd.min.js"></script>
+<script src="/js/misc.js"></script>
 
 
 <script type="text/javascript">
 var disqus_shortname = 'lythesia';
-
 (function(){
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
@@ -154,13 +152,29 @@ var disqus_shortname = 'lythesia';
 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.css" media="screen" type="text/css">
+<script src="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.js"></script>
 <script type="text/javascript">
 (function($){
-  $('.fancybox').fancybox();
+  // Caption
+  $('.entry').each(function(i){
+    $(this).find('img').each(function(){
+      var alt = this.alt;
+      if (alt){
+        $(this).after('<span class="caption">' + alt + '</span>');
+      }
+      $(this).wrap('<a href="' + this.src + '" data-fancybox="gallery" data-caption="' + alt + '" />');
+    });
+  });
+})(jQuery);
+</script>
 
-  $.scrollUp({scrollText: ''});
+
+
+<script src="https://cdn.staticfile.org/scrollup/2.4.1/jquery.scrollUp.min.js"></script>
+<script type="text/javascript">
+(function($){
+  $.scrollUp({scrollText: '', scrollImg: true});
 })(jQuery);
 </script>
 
