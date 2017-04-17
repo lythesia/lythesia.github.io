@@ -1,4 +1,4 @@
-title: Papa's room
+title: Papas's room
 date: 2017-04-15 23:43:07
 categories: life
 tags: [mus, quartet] 
@@ -6,7 +6,7 @@ tags: [mus, quartet]
 
 ### QUARTET  PAPAS  クァルテットパパス
 
-![Quartet Papas](http://yyphoto.qiniudn.com/image/articlepapas.jpg)
+![Quartet Papas](http://yyphoto.qiniudn.com/image/article/papas.png)
 
 > 1stviolin 粟津惇
 > 2ndviolin 青山英里香
@@ -18,15 +18,62 @@ tags: [mus, quartet]
 > 定期コンサートの傍ら、アウトリーチコンサートツアー、アーティストのレコーディング、現代曲初演など精力的に活動中。
 
 
-{% cplayer "QUARTET PAPAS" "http://106.2.123.67/papas-room/cover.jpg" 
-  '[
-  {"name": "BLESSING ～愛死天ROOのテーマ～","url":"http://106.2.123.67/papas-room/01.m4a"},
-  {"name": "La Veillée","url":"http://106.2.123.67/papas-room/02.m4a"},
-  {"name": "Music For A Found Harmonium","url":"http://106.2.123.67/papas-room/03.m4a"},
-  {"name": "アヴェ・マリア","url":"http://106.2.123.67/papas-room/04.m4a"},
-  {"name": "モルダウ(「わが祖国」より)","url":"http://106.2.123.67/papas-room/05.m4a"},
-  {"name": "弦楽四重奏曲第14番「死と乙女」第1楽章より","url":"http://106.2.123.67/papas-room/06.m4a"},
-  {"name": "弦楽四重奏曲第14番「死と乙女」第4楽章より","url":"http://106.2.123.67/papas-room/07.m4a"},
-  {"name": "ドラゴンクエスト序曲","url":"http://106.2.123.67/papas-room/bonus.mp3"}
-  ]'
-%}
+{% aplayerlist %}
+{
+  "narrow": false,
+  "autoplay": false,
+  "mutex": true,
+  "theme": "#e6d0b2",
+  "preload": "metadata",
+  "music": [
+    {
+        "title":"BLESSING ～愛死天ROOのテーマ～",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/01.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"La Veillée",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/02.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"Music For A Found Harmonium",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/03.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"アヴェ・マリア",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/04.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"モルダウ(「わが祖国」より)",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/05.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"弦楽四重奏曲第14番「死と乙女」第1楽章より",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/06.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"弦楽四重奏曲第14番「死と乙女」第4楽章より",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/07.m4a",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    },
+    {
+        "title":"ドラゴンクエスト序曲",
+        "author":"QUARTET PAPAS",
+        "url":"http://106.2.123.67/papas-room/bonus.mp3",
+        "pic":"http://106.2.123.67/papas-room/cover.jpg"
+    }
+  ]
+}
+{% endaplayerlist %}
