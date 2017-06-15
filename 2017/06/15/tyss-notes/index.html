@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Notes for TYSS | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="baka notes for teach-yourself-scheme-in-fixnum-days
+Q: why abbr as TYSS not TYSIFD?A: i like it :P
+this (these) notes may not contain all elements of ">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Notes for TYSS"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-06-15T11:03:16.000Z"><a href="/2017/06/15/tyss-notes/"><i>2017-06-15</i></a></time>
+      
+      
+  
+    <h1 class="title">Notes for TYSS</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <script src="/assets/js/APlayer.min.js"> </script><p>baka notes for <a href="http://ds26gte.github.io/tyscheme/" target="_blank" rel="external">teach-yourself-scheme-in-fixnum-days</a></p>
+<p>Q: why abbr as TYSS not TYSIFD?<br>A: i like it :P</p>
+<p>this (these) notes may not contain all elements of scheme (e.g. define-syntax&amp;syntax-rules), and some chaps are skipped.</p>
+<p>i just keep what i’ve got.</p>
+<hr>
+<h1 id="Ch2"><a href="#Ch2" class="headerlink" title="Ch2"></a>Ch2</h1><h2 id="type"><a href="#type" class="headerlink" title="type"></a>type</h2><p>literal cons pair: <code>&#39;(1 . 2)</code>, we need quote to avoid being evaluated as proc apply</p>
+<h2 id="concept"><a href="#concept" class="headerlink" title="concept"></a>concept</h2><p>Port:</p>
+<blockquote>
+<p>Ports are usually associated with files and consoles.</p>
+</blockquote>
+<p><code>(format (current-output-port) &quot;im format string&quot; args...)</code></p>
+<hr>
+<h1 id="Ch8"><a href="#Ch8" class="headerlink" title="Ch8"></a>Ch8</h1><h2 id="macro"><a href="#macro" class="headerlink" title="macro"></a>macro</h2><p>looks like</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">(<span class="name">define-macro</span> (<span class="name">..</span>)</div><div class="line">  <span class="comment">; usually</span></div><div class="line">  `(..</div><div class="line">    ,(eval-to-single-var)</div><div class="line">    ,@(eval-to-list)</div><div class="line">  )</div><div class="line">  <span class="comment">; so use it as **template**!</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<p>one class/object maker example illustrated:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define</span></span> ufo (<span class="name"><span class="builtin-name">if</span></span> <span class="literal">#f</span> <span class="literal">#f</span>))</div><div class="line"></div><div class="line"><span class="comment">;; (defstruct name . field-decl)</span></div><div class="line"><span class="comment">;; : field-decl := f-name | (f-name default-val)</span></div><div class="line"><span class="comment">;; =&gt; (make-$name [f-name f-val])</span></div><div class="line"><span class="comment">;; =&gt; ($name.$f-name obj)</span></div><div class="line"></div><div class="line">(<span class="name">define-macro</span> (<span class="name">defstruct</span> st-name . st-fields)</div><div class="line">  (<span class="name"><span class="builtin-name">let*</span></span> (</div><div class="line">    <span class="comment">;; fields-related</span></div><div class="line">    (<span class="name">symbol-of</span> (<span class="name"><span class="builtin-name">lambda</span></span> (x) (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">pair?</span></span> x) (<span class="name"><span class="builtin-name">car</span></span> x) x)))</div><div class="line">    (<span class="name">value-of</span> (<span class="name"><span class="builtin-name">lambda</span></span> (x) (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">pair?</span></span> x) (<span class="name"><span class="builtin-name">cadr</span></span> x) ufo)))</div><div class="line">    (<span class="name">st-field-syms</span> (<span class="name"><span class="builtin-name">map</span></span> symbol-of st-fields))</div><div class="line">    (<span class="name">st-field-count</span> (<span class="name"><span class="builtin-name">length</span></span> st-fields))</div><div class="line">    (<span class="name">st-field-getter</span> (<span class="name"><span class="builtin-name">lambda</span></span> (f-name) (<span class="name">symbol-append</span> st-name <span class="symbol">'.</span> f-name)))</div><div class="line">    (<span class="name">st-field-setter</span> (<span class="name"><span class="builtin-name">lambda</span></span> (f-name) (<span class="name">symbol-append</span> <span class="symbol">'set!</span> st-name <span class="symbol">'.</span> f-name)))</div><div class="line">    <span class="comment">;; struct-name-related</span></div><div class="line">    (<span class="name">st-maker</span> (<span class="name">symbol-append</span> <span class="symbol">'make-</span> st-name))</div><div class="line">    (<span class="name">st-identifier</span> (<span class="name">symbol-append</span> st-name <span class="symbol">'?</span>))</div><div class="line">    <span class="comment">;; storage</span></div><div class="line">    (<span class="name">st-size</span> (<span class="name">1+</span> st-field-count))</div><div class="line">    (<span class="name">st-fields-default-vals</span> (<span class="name"><span class="builtin-name">map</span></span> value-of st-fields))</div><div class="line">    )</div><div class="line">    `(begin</div><div class="line">      ;; maker</div><div class="line">      (define (,st-maker . field-val-list)</div><div class="line">         (let (</div><div class="line">           ;; holder (init with header + defaults)</div><div class="line">           (data (list-&gt;vector (cons ',st-name ',st-fields-default-vals)))</div><div class="line">           )</div><div class="line">           ;; override if arg provided</div><div class="line">           (let loop ((rest-pairs field-val-list))</div><div class="line">             (if (not (null? rest-pairs))</div><div class="line">               (begin</div><div class="line">                 (let (</div><div class="line">                       (arg-name (car rest-pairs))</div><div class="line">                       (arg-val (cadr rest-pairs))</div><div class="line">                       (list-find-index</div><div class="line">                         (lambda (x lst)</div><div class="line">                           (begin</div><div class="line">                             (define (iter i rest)</div><div class="line">                               (cond</div><div class="line">                                 ((null? rest) ufo)</div><div class="line">                                 ((eq? (car rest) x) i)</div><div class="line">                                 (else (iter (<span class="number">1</span>+ i) (cdr rest)))</div><div class="line">                               )</div><div class="line">                             )</div><div class="line">                             (iter <span class="number">0</span> lst)</div><div class="line">                           )</div><div class="line">                         )</div><div class="line">                       ))</div><div class="line">                   (vector-set! data (<span class="number">1</span>+ (list-find-index arg-name ',st-field-syms)) arg-val)</div><div class="line">                   (loop (cddr rest-pairs))</div><div class="line">                 )</div><div class="line">               )</div><div class="line">             )</div><div class="line">           )</div><div class="line">           ;; return vector</div><div class="line">           data</div><div class="line">         )</div><div class="line">      )</div><div class="line">      ;; identifier</div><div class="line">      (define (,st-identifier st-obj)</div><div class="line">        (and</div><div class="line">         (vector? st-obj)</div><div class="line">         (eq? ,st-name (vector-ref st-obj <span class="number">0</span>))</div><div class="line">        )</div><div class="line">      )</div><div class="line">      ;; getter&amp;setter</div><div class="line">      ,@(let loop ((i <span class="number">0</span>) (procs '()))</div><div class="line">          (if (&lt; i st-field-count)</div><div class="line">            (loop (<span class="number">1</span>+ i)</div><div class="line">                  (let ((f-name (list-ref st-field-syms i)))</div><div class="line">                    (cons</div><div class="line">                      `(define ,(st-field-getter f-name) (lambda (st-obj) (vector-ref st-obj ,(<span class="number">1</span>+ i))))</div><div class="line">                      (cons</div><div class="line">                        `(define ,(st-field-setter f-name) (lambda (st-obj val) (vector-set! st-obj ,(<span class="number">1</span>+ i) val)))</div><div class="line">                        procs</div><div class="line">                      )</div><div class="line">                    )</div><div class="line">                  )</div><div class="line">            )</div><div class="line">            procs</div><div class="line">          )</div><div class="line">      )</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>points:</p>
+<ul>
+<li>storage as tagged vector</li>
+<li>init with default values (ufo if not provided)</li>
+<li>override with real values</li>
+</ul>
+<hr>
+<h1 id="Ch10"><a href="#Ch10" class="headerlink" title="Ch10"></a>Ch10</h1><h2 id="alist"><a href="#alist" class="headerlink" title="alist"></a>alist</h2><p>sth like <code>((a . 1) (b . 2))</code></p>
+<p><code>(assv key alist)</code> find <em>cons cell</em> in <code>alist</code> with <code>key</code></p>
+<hr>
+<p>つづく</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/note/">note</a></li>
+      
+        <li><a href="/tags/scheme/">scheme</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2017/04/15/papas-room/" title="Papas&#39;s room">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        Papas&#39;s room
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <span>
+      nil
+    </span>
+    <i class="fa fa-long-arrow-right"></i>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>7</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>7</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+    <li><a href="/tags/scheme/">scheme<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/06/">2017 - 06</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery.imagesloaded/4.1.1/imagesloaded.pkgd.min.js"></script>
+<script src="/js/misc.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.css" media="screen" type="text/css">
+<script src="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.js"></script>
+<script type="text/javascript">
+(function($){
+  // Caption
+  $('.entry').each(function(i){
+    $(this).find('img').each(function(){
+      var alt = this.alt;
+      if (alt){
+        $(this).after('<span class="caption">' + alt + '</span>');
+      }
+      $(this).wrap('<a href="' + this.src + '" data-fancybox="gallery" data-caption="' + alt + '" />');
+    });
+  });
+})(jQuery);
+</script>
+
+
+
+<script src="https://cdn.staticfile.org/scrollup/2.4.1/jquery.scrollUp.min.js"></script>
+<script type="text/javascript">
+(function($){
+  $.scrollUp({scrollText: '', scrollImg: true});
+})(jQuery);
+</script>
+
+
+</body>
+</html>
