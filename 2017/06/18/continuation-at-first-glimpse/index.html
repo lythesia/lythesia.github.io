@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Continuation at First Glimpse | &gt;&gt; _</title>
+  <meta name="author" content="lythesia">
+  
+  <meta name="description" content="继续tyss notes前先简单整理一下continuation的概念(偷懒把以前的笔记直接贴上来, 大概有不太准确的地方, 但应该不影响理解)
+基本概念continuation的中文一般都叫做”续延”(还蛮好听的), 不过解释起来比较麻烦, 还是结合代码来看更好理解一点.
+首先scheme里的co">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Continuation at First Glimpse"/>
+  <meta property="og:site_name" content="&gt;&gt; _"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="&gt;&gt; _" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">&gt;&gt; _</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    
+      <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-06-18T05:06:45.000Z"><a href="/2017/06/18/continuation-at-first-glimpse/"><i>2017-06-18</i></a></time>
+      
+      
+  
+    <h1 class="title">Continuation at First Glimpse</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <script src="/assets/js/APlayer.min.js"> </script><p>继续tyss notes前先简单整理一下continuation的概念(偷懒把以前的笔记直接贴上来, 大概有不太准确的地方, 但应该不影响理解)</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>continuation的中文一般都叫做”续延”(还蛮好听的), 不过解释起来比较麻烦, 还是结合代码来看更好理解一点.</p>
+<p>首先scheme里的continuation(太长了, 下文缩写为cont吧)的基本形式是长这个样子的: </p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">call/cc</span></span></div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (cc)</div><div class="line">    <span class="comment">; do some computation)</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<p><code>call/cc</code>是<code>call-with-current-continuation</code>的缩写, lambda的参数<code>cc</code>就是当前环境的一个cont, 可以理解为当前的调用栈, 它知道自己<strong>未来</strong>需要执行的过程. 那么怎么表示”未来的计算”这样一个概念呢? 在编程语言中自然就是函数了, 而在scheme中就是过程(procedure), 更一般的就用lambda来表示. <code>cc</code>就是这样一个只接受一个参数的lambda, 而调用<code>(cc val)</code>则是整个cont动作的关键—-它将流程<strong>跳</strong>回cont定义的位置, 并以<code>val</code>代换为其计算出的结果.</p>
+<p>来暴力理解一下, 把<code>(call/cc ..) (rest code..)</code>看做这样一个结构<code>[] (rest code ..)</code>, 在<code>(cc val)</code>的时候直接回到了<code>[]</code>的地方, 并将其替换为了<code>val</code>.</p>
+<p>看一个简单(似乎不是特别简单)的例子:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">+</span></span> <span class="number">1</span> (<span class="name"><span class="builtin-name">call/cc</span></span>)</div><div class="line">      (<span class="name"><span class="builtin-name">lambda</span></span> (cc) (<span class="name"><span class="builtin-name">+</span></span> <span class="number">2</span> (<span class="name">cc</span> <span class="number">3</span>)))</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>一步步来:</p>
+<ol>
+<li>整个block可以看做<code>(+ 1 [])</code></li>
+<li>再看<code>[]</code>内部: <code>(lambda (cc) (+ 2 (cc 3)))</code>, 这个lambda的body是会被执行的</li>
+<li><code>(cc 3)</code>以3为参数调用cont, 则跳转到其定义的地方<code>[]</code>将其替换</li>
+<li>最后变为<code>(+ 1 3)</code>, 结果为4</li>
+<li><code>(+ 2 ..)</code>的部分并没有luan3用 :P</li>
+</ol>
+<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="Jump-out"><a href="#Jump-out" class="headerlink" title="Jump out"></a>Jump out</h4><p>这个用法有个名字叫”非本地退出(non-local exit)”, 说白了就是现代编程语言里break啦, exit啦这些东西.</p>
+<ul>
+<li>scheme没有这些关键字</li>
+<li>scheme觉得它们不够old-school</li>
+<li>scheme决定这么搞</li>
+</ul>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">search</span> wanted? lst)</div><div class="line">  (<span class="name"><span class="builtin-name">call/cc</span></span></div><div class="line">    (<span class="name"><span class="builtin-name">lambda</span></span> (return)</div><div class="line">      (<span class="name"><span class="builtin-name">for-each</span></span> (<span class="name"><span class="builtin-name">lambda</span></span> (e)</div><div class="line">                  (<span class="name"><span class="builtin-name">if</span></span> (<span class="name">wanted?</span> e) (<span class="name">return</span> e)))</div><div class="line">                lst)</div><div class="line">      <span class="literal">#f</span></div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>功能很直白, 从一个list里找到符合条件的元素, 不存在就返回<code>#f</code>. <code>return</code>的用法是直接从<code>for-each</code>的循环中跳出了. 这里最后的<code>#f</code>可不可以写成<code>(return #f)</code>? 当然可以, 不过整个lambda都计算完了, 自然是返回最后一个计算值, 所以可以直接省略啦.</p>
+<p>另一个例子</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">list-product</span> list)</div><div class="line">  (<span class="name"><span class="builtin-name">call/cc</span></span></div><div class="line">    (<span class="name"><span class="builtin-name">lambda</span></span> (exit)</div><div class="line">      (<span class="name"><span class="builtin-name">let</span></span> iter ((<span class="name">rest</span> lst))</div><div class="line">        (<span class="name"><span class="builtin-name">cond</span></span></div><div class="line">          ((<span class="name"><span class="builtin-name">null?</span></span> rest) <span class="number">1</span>)</div><div class="line">          ((<span class="name"><span class="builtin-name">zero?</span></span> (<span class="name"><span class="builtin-name">car</span></span> rest)) (<span class="name">exit</span> <span class="number">0</span>))</div><div class="line">          (<span class="name"><span class="builtin-name">else</span></span> (<span class="name"><span class="builtin-name">*</span></span> (<span class="name"><span class="builtin-name">car</span></span> rest) (<span class="name">iter</span> (<span class="name"><span class="builtin-name">cdr</span></span> rest))))</div><div class="line">        )</div><div class="line">      )</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>对一个list完成fold计算乘积的操作, 中途如果遇到0则立即退出, 避免了不必要的遍历.</p>
+<h4 id="Jump-back"><a href="#Jump-back" class="headerlink" title="Jump back"></a>Jump back</h4><p>在scheme里, cont和lambda一样都是一等公民, 它自然也可以被当做参数抛来抛去, 或者跟其他变量进行绑定.</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define</span></span> return <span class="literal">#f</span>)</div><div class="line">(<span class="name"><span class="builtin-name">+</span></span> <span class="number">1</span> (<span class="name"><span class="builtin-name">call/cc</span></span></div><div class="line">      (<span class="name"><span class="builtin-name">lambda</span></span> (cont) (<span class="name"><span class="builtin-name">set!</span></span> return cont) <span class="number">1</span>)</div><div class="line">     )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>老样子一步一步看:</p>
+<ol>
+<li>全局定义一个<code>return</code>(绑定啥值无所谓)</li>
+<li>替换cont形式: <code>(+ 1 [])</code></li>
+<li>在lambda body中, <code>return</code>与cont<code>[]</code>绑定!</li>
+<li>1作为返回值, 则<code>(+ 1 [])</code>结果为2</li>
+</ol>
+<p>然而并没有结束, 此时<code>return</code>本身已经作为一个”+1器”存在了, 它代表的cont即<code>(+ 1 [])</code>, 每次调用<code>(return v)</code>便会得到<code>v + 1</code>.</p>
+<h4 id="Jump-out-and-Jump-back"><a href="#Jump-out-and-Jump-back" class="headerlink" title="Jump out and Jump back"></a>Jump out and Jump back</h4><p>看到这里, 可以感觉到cont是能作为程序流控制的手段的, 用来完成一些比较时髦的动作, 比如大家都喜欢的协程 :P</p>
+<p>所以接下来看一个模拟协程计算的较复杂的例子:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">hefty-computation</span> do-other-stuff) <span class="comment">; 主要复杂计算</span></div><div class="line"> (<span class="name"><span class="builtin-name">let</span></span> loop ((<span class="name">n</span> <span class="number">5</span>))</div><div class="line">   (<span class="name"><span class="builtin-name">display</span></span> <span class="string">"Hefty computation: "</span>)(<span class="name"><span class="builtin-name">display</span></span> n)(<span class="name"><span class="builtin-name">newline</span></span>)</div><div class="line">   (<span class="name"><span class="builtin-name">set!</span></span> do-other-stuff (<span class="name"><span class="builtin-name">call/cc</span></span> do-other-stuff)) <span class="comment">; (1)</span></div><div class="line">   (<span class="name"><span class="builtin-name">display</span></span> <span class="string">"Hefty computation (b)\n"</span>)</div><div class="line">   (<span class="name"><span class="builtin-name">set!</span></span> do-other-stuff (<span class="name"><span class="builtin-name">call/cc</span></span> do-other-stuff)) <span class="comment">; (3)</span></div><div class="line">   (<span class="name"><span class="builtin-name">display</span></span> <span class="string">"Hefty computation (c)\n"</span>)</div><div class="line">   (<span class="name"><span class="builtin-name">set!</span></span> do-other-stuff (<span class="name"><span class="builtin-name">call/cc</span></span> do-other-stuff))</div><div class="line">   (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">&gt;</span></span> n <span class="number">0</span>) (<span class="name">loop</span> (<span class="name"><span class="builtin-name">-</span></span> n <span class="number">1</span>)))</div><div class="line"> )</div><div class="line">)</div><div class="line"></div><div class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">superfluous-computation</span> do-other-stuff) <span class="comment">; 次要计算</span></div><div class="line">  (<span class="name"><span class="builtin-name">let</span></span> loop ()</div><div class="line">    (<span class="name"><span class="builtin-name">for-each</span></span> (<span class="name"><span class="builtin-name">lambda</span></span> (item)</div><div class="line">                (<span class="name"><span class="builtin-name">display</span></span> item)(<span class="name"><span class="builtin-name">newline</span></span>)</div><div class="line">                (<span class="name"><span class="builtin-name">set!</span></span> do-other-stuff (<span class="name"><span class="builtin-name">call/cc</span></span> do-other-stuff))) <span class="comment">; (2)</span></div><div class="line">              '(<span class="string">"Straight up."</span> <span class="string">"Quarter after."</span> <span class="string">"Half past."</span>  <span class="string">"Quarter til."</span>)</div><div class="line">    )</div><div class="line">    (<span class="name">loop</span>) <span class="comment">; this trigger inf loop</span></div><div class="line">  )</div><div class="line">)</div><div class="line"></div><div class="line">(<span class="name">hefty-computation</span> superfluous-computation)</div></pre></td></tr></table></figure>
+<p>为了大家(<del>我自己</del>)能简单的看懂, 我们走的慢一些:</p>
+<ol>
+<li>分别定义了两个过程: 主要计算和次要计算; 以调用主要计算开始, 参数为次要计算本身</li>
+<li>开始主要计算, 进入loop(第一次), 打印”Hefty computation: 5”</li>
+<li>(1)处<code>call/cc</code>以次要计算为参数, 结合后者定义, 则有(为了方便, 分别记两个两个过程的参数为do1和do2):</li>
+<li>主要计算产生第一个cont, <code>(set! do1 []-1)</code><ol>
+<li>开始次要计算, 参数do2为上一步的<code>[]-1</code>, 进入loop(第一次), for-each打印列表中第一个”Straight up.”</li>
+<li>到达(2) <code>(call/cc do2)</code>, 此时次要计算产生一个cont, 记为<code>[]-2</code>, 同时完成do2也就是<code>[]-1</code>的计算, 流程回到了(1), 且将do1绑定到了<code>[]-2</code></li>
+</ol>
+</li>
+<li>从(1)后继续主要计算, 打印”Hefty computation (b)”</li>
+<li>主要计算(3)处产生第二个cont<code>[]-3</code>, 形式和上次一样; 由于参数do1实际上是<code>[]-2</code>, 则:<ol>
+<li>跳转到<code>[]-2</code>即(2)处继续执行, 此时<code>set!</code>将<code>[]-2</code>的返回值即<code>[]-3</code>绑定到do2</li>
+<li>for-each的第二个循环打印”Quarter after.”</li>
+<li>流程又到(2)处, <code>(call/cc []-3)</code>, 并产生当前的cont<code>[]-4</code>, 作为<code>[]-3</code>的参数; 执行<code>[]-3</code>的计算, 于是又回到了(3)处</li>
+</ol>
+</li>
+<li>do1绑定为<code>[]-4</code>, 且打印”Hefty computation (c)”</li>
+<li>接下来的过程类似上面, 即不断的在主要计算和次要计算之间跳来跳去(和协程的切换是一样的)</li>
+</ol>
+<p>看上去似乎有点晕, 总结一下这个用法的关键在于:</p>
+<p><code>(call/cc cc)</code>实际上是将当前的cont作为参数cont<code>cc</code>的结果, 然后通过执行<code>cc</code>跳转到cont创建时的地方; 之后通过<code>set!</code>将之前的cont(即<code>cc</code>的结果)保存下来, 然后再次通过<code>(call/cc cont)</code>跳回去, 如此往复.</p>
+<h3 id="最后一个例子"><a href="#最后一个例子" class="headerlink" title="最后一个例子"></a>最后一个例子</h3><figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">let*</span></span> ((<span class="name">yin</span>  ((<span class="name"><span class="builtin-name">lambda</span></span> (cc) (<span class="name"><span class="builtin-name">write-char</span></span> <span class="literal">#\@</span>) cc) <span class="comment">; proc</span></div><div class="line">              (<span class="name"><span class="builtin-name">call/cc</span></span> (<span class="name"><span class="builtin-name">lambda</span></span> (c) c))))        <span class="comment">; arg</span></div><div class="line">       (<span class="name">yang</span> ((<span class="name"><span class="builtin-name">lambda</span></span> (cc) (<span class="name"><span class="builtin-name">write-char</span></span> <span class="literal">#\*</span>) cc) <span class="comment">; proc</span></div><div class="line">              (<span class="name"><span class="builtin-name">call/cc</span></span> (<span class="name"><span class="builtin-name">lambda</span></span> (c) c)))))       <span class="comment">; arg</span></div><div class="line">  (<span class="name">yin</span> yang)</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>这是网上流传很久的yin-yang puzzle, 程序会不停的交替打印”@*@**@***@ …”. 这个例子大家可以尝试自己拿纸笔推一下(虽然过程特别的绕, 但是通过不断代换的笨办法还是可以一战的), 或者可以看一下<a href="http://stackoverflow.com/questions/2694679/how-does-the-yin-yang-puzzle-work/36513942#36513942" target="_blank" rel="external">这个解答</a>就比较好理解了, stay calm :P</p>
+<hr>
+<p>ref:</p>
+<ul>
+<li><a href="http://geek-zh.net/cps-and-call-cc/" target="_blank" rel="external">http://geek-zh.net/cps-and-call-cc/</a></li>
+<li><a href="http://www.ituring.com.cn/article/53793" target="_blank" rel="external">http://www.ituring.com.cn/article/53793</a></li>
+<li><a href="http://community.schemewiki.org/?call-with-current-continuation" target="_blank" rel="external">http://community.schemewiki.org/?call-with-current-continuation</a></li>
+<li><a href="http://stackoverflow.com/questions/2694679/how-does-the-yin-yang-puzzle-work/36513942#36513942" target="_blank" rel="external">http://stackoverflow.com/questions/2694679/how-does-the-yin-yang-puzzle-work/36513942#36513942</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories tag">
+    <ul class="inline">
+      
+        <li><a href="/categories/lang/">lang</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+  
+  <div class="tags tag">
+    <ul class="inline">
+      
+        <li><a href="/tags/scheme/">scheme</a></li>
+      
+    </ul>
+  </div>
+
+
+        
+        
+<nav class="article-nav clearfix">
+  
+  <div class="article-prev">
+    <a href="/2017/06/15/tyss-notes/" title="Notes for TYSS">
+      <i class="fa fa-long-arrow-left"></i>
+      <span>
+        
+        Notes for TYSS
+        
+      </span>
+    </a>
+  </div>
+  
+  
+  <div class="article-next">
+    <span>
+      nil
+    </span>
+    <i class="fa fa-long-arrow-right"></i>
+  </div>
+  
+</nav>
+
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+      <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/lang/">lang<span>8</span></a></li>
+  
+    <li><a href="/categories/life/">life<span>1</span></a></li>
+  
+    <li><a href="/categories/wiki/">wiki<span>1</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget tag">
+  <h3 class="title title-tag">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/id3tag/">id3tag<span>1</span></a></li>
+  
+    <li><a href="/tags/mus/">mus<span>2</span></a></li>
+  
+    <li><a href="/tags/note/">note<span>7</span></a></li>
+  
+    <li><a href="/tags/quartet/">quartet<span>1</span></a></li>
+  
+    <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
+  
+    <li><a href="/tags/scheme/">scheme<span>2</span></a></li>
+  
+  </ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">Archives</h3>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/06/">2017 - 06</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+</div>
+
+
+
+  
+<div class="widget">
+  <h3 class="title">About</h3>
+  <div class="entry">
+    <div id=about>
+      <div class="line"><div class="author"></div></div>
+      <ul>
+        <li><a href="mailto:iranaikimi@gmail.com"><i class="mail"></i><strong>iranaikimi@gmail.com</strong></a></li>
+        <li><a href="https://github.com/lythesia"><i class="github"></i><strong>https://github.com/lythesia</strong></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</aside>
+      <div class="clearfix"></div>
+    
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 lythesia
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery.imagesloaded/4.1.1/imagesloaded.pkgd.min.js"></script>
+<script src="/js/misc.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'lythesia';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.css" media="screen" type="text/css">
+<script src="https://cdn.staticfile.org/fancybox/3.0.47/jquery.fancybox.min.js"></script>
+<script type="text/javascript">
+(function($){
+  // Caption
+  $('.entry').each(function(i){
+    $(this).find('img').each(function(){
+      var alt = this.alt;
+      if (alt){
+        $(this).after('<span class="caption">' + alt + '</span>');
+      }
+      $(this).wrap('<a href="' + this.src + '" data-fancybox="gallery" data-caption="' + alt + '" />');
+    });
+  });
+})(jQuery);
+</script>
+
+
+
+<script src="https://cdn.staticfile.org/scrollup/2.4.1/jquery.scrollUp.min.js"></script>
+<script type="text/javascript">
+(function($){
+  $.scrollUp({scrollText: '', scrollImg: true});
+})(jQuery);
+</script>
+
+
+</body>
+</html>
