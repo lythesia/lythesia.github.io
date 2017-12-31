@@ -50,6 +50,100 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-12-31T02:28:28.000Z"><a href="/2017/12/31/macro-of-scheme/"><i>2017-12-31</i></a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/12/31/macro-of-scheme/">macro of scheme</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h3 id="intro"><a href="#intro" class="headerlink" title="intro"></a>intro</h3><p>大家对宏(特指C/C++的宏)应该不陌生, 甚至被这个东西坑过无数次, 究其原因, C/C++的宏本质上只是文本替换而已, 没有任何语法层面的信息, 因而也就做不到类型检查语法检查这些事情; 而scheme的宏是真正工作在语法树上的, 甚至可以对其进行修改!</p>
+<h3 id="define-syntax"><a href="#define-syntax" class="headerlink" title="define-syntax"></a>define-syntax</h3><p>在R5RS以前, scheme通过<code>define-macro</code>来定义宏, 形式如下:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">(<span class="name">define-macro</span> (<span class="name">..</span>)</div><div class="line">  <span class="comment">; usually</span></div><div class="line">  `(..</div><div class="line">    ,(eval-to-single-var)</div><div class="line">    ,@(eval-to-list)</div><div class="line">  )</div><div class="line">  <span class="comment">; so use it as **template**!</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<p>行为上其实和C/C++的宏是差不多的, 在transform阶段简单的做了token的替换, 看一个简单的例子:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">(<span class="name">define-macro</span></div><div class="line">  myor</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (a b)</div><div class="line">    `(let ([tmp ,a])</div><div class="line">      (if tmp <span class="literal">#t</span> ,b)</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div><div class="line">(<span class="name"><span class="builtin-name">let</span></span> ([<span class="name">tmp</span> <span class="literal">#t</span>]) (<span class="name">myor</span> <span class="literal">#f</span> tmp)) <span class="comment">; oops, here gives #f, not expected</span></div></pre></td></tr></table></figure>
+<p>这个坑很明显, 和C/C++一样, 宏内部出现的名字<code>tmp</code>被实际使用宏的代码污染了. 不过聪明的scheme实现会提供一个<code>gensym</code>方法, 用来生成一个独一无二的名字, 好我们试试看改进版本:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">(<span class="name">define-macro</span></div><div class="line">  myor</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (a b)</div><div class="line">    (<span class="name"><span class="builtin-name">let</span></span> ([<span class="name">t</span> (<span class="name">gensym</span>)])</div><div class="line">      `(let ([,t ,a]) ; what if `a` used variable named `t`? it<span class="symbol">'s</span> ok, `a` is lexical scoping</div><div class="line">         (if ,t ,t ,b)</div><div class="line">      )</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>虽然通过<code>gensym</code>解决了临时变量的名字问题, 但是依然没办法阻止用户污染其他名字, 比如重新定义<code>if</code>..于是我们意识到:</p>
+<ol>
+<li>名字(binding)在上下文环境里的重要性</li>
+<li>宏<strong>被定义</strong>时的环境和<strong>被执行</strong>的环境是两个完全不同的概念</li>
+</ol>
+<p>回头来看<code>define-macro</code>的行为, 其实它的工作只是<strong>替换</strong>代码, 本身并不携带任何binding信息, 或者说, 它的binding信息来源于真正被执行的环境, 这个环境我们叫做<strong>动态作用域</strong></p>
+<p>那么, 显然在这种情况下, 我们需要一种能够拥有自己独立binding环境的宏. scheme在R5RS后提供了新的语法</p>
+<h3 id="define-syntax-1"><a href="#define-syntax-1" class="headerlink" title="define-syntax"></a>define-syntax</h3><p>从名字可以感觉出来, 这种宏应当是工作在语法层面, 形式大致如下</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> name</div><div class="line">  (<span class="name"><span class="builtin-name">syntax-rules</span></span> ( reserved words )</div><div class="line">    ((<span class="name">_</span> arg) .. deal with arg ..)</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li><code>_</code>表示macro本身的placeholder</li>
+<li><code>syntax-rules</code>则支持模式匹配</li>
+</ul>
+<h4 id="syntax-rules"><a href="#syntax-rules" class="headerlink" title="syntax-rules"></a>syntax-rules</h4><p>模式匹配是一个很强大的功能, 可以很方便的定义一些含有递归结构的逻辑(scala中的pattern matching甚至能够一定程度上实现语义的匹配, 用起来也是非常顺手)</p>
+<p>一个简单的例子:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">; (let*</span></div><div class="line"><span class="comment">;  ((..) (..))</span></div><div class="line"><span class="comment">;  body</span></div><div class="line"><span class="comment">;  )</span></div><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> let*</div><div class="line">  (<span class="name"><span class="builtin-name">syntax-rules</span></span></div><div class="line">    ()</div><div class="line">    ((<span class="name">_</span> ((<span class="name">p</span> v)) b ...)</div><div class="line">     (<span class="name"><span class="builtin-name">let</span></span> ((<span class="name">p</span> v)) b ...)</div><div class="line">     )</div><div class="line">    ((<span class="name">_</span> ((<span class="name">p1</span> v1) (<span class="name">p2</span> v2) ...) b ...)</div><div class="line">     (<span class="name"><span class="builtin-name">let</span></span> ((<span class="name">p1</span> v1)))</div><div class="line">      (<span class="name"><span class="builtin-name">let*</span></span> ((<span class="name">p2</span> v2) ...) b ...)</div><div class="line">     )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>可以看到<code>let*</code>的定义非常简单, 甚至可以像普通方法一样进行递归定义</p>
+<h4 id="hygienic"><a href="#hygienic" class="headerlink" title="hygienic"></a>hygienic</h4><p>读者可以尝试一下在<code>let*</code>中进行各种”名字污染”行为(比如重新定义<code>let</code>), 结果当然是可以正确执行. 因为<code>define-syntax</code>引入了hygiene macro(卫生宏)的概念, 即: 宏内部使用的binding信息来源于被定义时的环境, 而不受到运行环境的影响, 这也叫作referential transparency. 对应的, 我们称hygiene macro工作在<strong>词法作用域</strong></p>
+<p>这是不是意味有了卫生宏的特性我们不需要动态作用域的功能了呢? 也不尽然, 看一个场景</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">(<span class="name">define-macro</span></div><div class="line">  show-vars</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (. vars)</div><div class="line">    `(begin</div><div class="line">       (display</div><div class="line">         (list</div><div class="line">           ; question about ',x and ,x?</div><div class="line">           ; remember we are generating code here!</div><div class="line">           ; ,x  -&gt; gives the name, just like we input `x` in repl, and `x` will be evaluated as variable</div><div class="line">           ; ',x -&gt; gives `<span class="symbol">'some-symbol</span>`, so it is evaluated as symbol!</div><div class="line">           ,@(map (lambda (x) `(list ',x ,x)) vars))</div><div class="line">       )</div><div class="line">       (newline)</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div><div class="line">(<span class="name"><span class="builtin-name">let</span></span> ([<span class="name">i</span> <span class="number">1</span>] [<span class="name">j</span> <span class="number">3</span>]) (<span class="name">show-vars</span> i j)) <span class="comment">; gives ((i 1) (j 3))</span></div></pre></td></tr></table></figure>
+<p><code>show-vars</code>展示了当前环境下定义的变量的<strong>名字</strong>和内容, 而这是一个运行时的环境, 恰好<code>define-macro</code>能够做到, 这也是词法作用域和动态作用域的区别</p>
+<h4 id="syntax-case"><a href="#syntax-case" class="headerlink" title="syntax-case"></a>syntax-case</h4><p>scheme也提供了比<code>syntax-rules</code>更细粒度的语法控制能力(为什么这么说?), 其形式如下:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> some-macro</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (syntax-form)</div><div class="line">    (<span class="name"><span class="builtin-name">syntax-case</span></span> syntax-form ()</div><div class="line">      [(<span class="name">_</span> pattern ...)</div><div class="line">       &lt;fender&gt;</div><div class="line">       &lt;expr&gt; ...</div><div class="line">      ]</div><div class="line">      ...</div><div class="line">    )</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>关于<code>fender</code>的概念(不过这里没有用到):</p>
+<blockquote>
+<p>If the optional <fender> is present, it serves as an additional constraint on acceptance of a clause. If the <pattern> of a given <syntax-case clause=""> matches the input value, the corresponding <fender> is evaluated. If <fender> evaluates to a true value, the clause is accepted; otherwise, the clause is rejected as if the pattern had failed to match the value. Fenders are logically a part of the matching process, i.e., they specify additional matching constraints beyond the basic structure of the input.</fender></fender></syntax-case></pattern></fender></p>
+</blockquote>
+<p>对比一下两者的特点:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> when</div><div class="line">  (<span class="name"><span class="builtin-name">syntax-rules</span></span> ()</div><div class="line">    ((<span class="name">_</span> test e e* ...)</div><div class="line">     (<span class="name"><span class="builtin-name">if</span></span> test (<span class="name"><span class="builtin-name">begin</span></span> e e* ...)))))</div><div class="line"></div><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> when</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (x)</div><div class="line">    (<span class="name"><span class="builtin-name">syntax-case</span></span> x ()</div><div class="line">      ((<span class="name">_</span> test e e* ...)</div><div class="line">       #'(if test (begin e e* ...))))))</div></pre></td></tr></table></figure>
+<ul>
+<li>都支持pattern matching</li>
+<li><code>syntax-case</code>的返回有<code>#&#39;</code>前缀: 实际上被用来替换在pattern matching里被捕获的模式变量</li>
+<li>(语法上看不出来的)<code>syntax-case</code>提供了<strong>拆解</strong>和<strong>重组</strong>语法对象的能力, 即操作syntax-object的能力(什么是syntax-object? 我们先往下看)</li>
+</ul>
+<h4 id="datum-amp-syntax-object"><a href="#datum-amp-syntax-object" class="headerlink" title="datum &amp; syntax object"></a>datum &amp; syntax object</h4><p>比如我们想实现这样一个宏<code>aif</code>:</p>
+<p><code>(aif (getuid) (display it) (display &quot;none&quot;))</code>, <code>it</code>是一个动态的binding, 显然aif需要工作在动态作用域</p>
+<h5 id="版本1"><a href="#版本1" class="headerlink" title="版本1"></a>版本1</h5><figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">;; doesn't work</span></div><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> aif</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (x)</div><div class="line">    (<span class="name"><span class="builtin-name">syntax-case</span></span> x ()</div><div class="line">      ((<span class="name">_</span> test then else)</div><div class="line">       #'(let ((it test))</div><div class="line">           (if it then else))))))</div></pre></td></tr></table></figure>
+<p><code>then</code> <code>else</code> 都是syntax-object, 在syntax-form中作为模板变量被替换时仅仅保留了各自的<strong>词法上下文</strong>(lexical scope), 因此它们都不能访问<code>it</code> (因为在他们定义的环境中并没有<code>it</code>, 这也是referential transparency的体现)</p>
+<h5 id="版本2"><a href="#版本2" class="headerlink" title="版本2"></a>版本2</h5><figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">;; doesn't work either</span></div><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> aif</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (x)</div><div class="line">    (<span class="name"><span class="builtin-name">syntax-case</span></span> x ()</div><div class="line">      ((<span class="name">_</span> test then else)</div><div class="line">       (<span class="name"><span class="builtin-name">let</span></span> ((<span class="name">it</span> (<span class="name">datum-&gt;syntax</span> x <span class="symbol">'it</span>))) `it`(<span class="number">1</span>)</div><div class="line">         #'(let ((it test)) ; this `it`(<span class="number">2</span>)</div><div class="line">             (if it then else))))))) <span class="comment">; and this `it`(2), both not references `it`(1) (there are diffrerent objects! or sth)</span></div></pre></td></tr></table></figure>
+<ul>
+<li><code>datum-&gt;syntax</code>用于把一个symbol变成给定syntax-form中的syntax-object</li>
+<li><code>#&#39;</code>内部只会替换在pattern match里被捕获的模式变量, 其他的名字则引用自定义该macro时的词法上下文</li>
+</ul>
+<p>虽然通过<code>datum-&gt;syntax</code>引入了一层lexical scope, 但是请注意该scope是相对于<code>x</code>(即整个<code>(aif ..)</code>调用的syntax-object)来说的, 换句话说是<code>aif</code>调用的上下文(例如<code>(let ([..]) (aif ..))</code>, 则aif的上下文即let以及let的外层环境); 而在<code>#&#39;(let ((it test)) ..)&#39;</code>中的<code>it</code>仅仅是展开后的一个名字, 与<code>datum-&gt;syntax</code>引入的<code>it</code>并不是同一个东西, 尽管后者确实能被then/else引用到(如果有被定义的话, 而在这个例子里, 尽管它拥有可以被then/else访问的lexical scope, 但实际上环境里并没有定义它, 因而会出现unbound variable错误)<br>(hint: 在drracket里可以很方便的看到referencing的情况)</p>
+<h5 id="版本3"><a href="#版本3" class="headerlink" title="版本3"></a>版本3</h5><figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">;; works, but is obtuse</span></div><div class="line">(<span class="name"><span class="builtin-name">define-syntax</span></span> aif</div><div class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (x)</div><div class="line">    (<span class="name"><span class="builtin-name">syntax-case</span></span> x ()</div><div class="line">      ((<span class="name">_</span> test then else)</div><div class="line">       <span class="comment">;; invoking syntax-case on the generated</span></div><div class="line">       <span class="comment">;; syntax object to expose it to `syntax'</span></div><div class="line">       (<span class="name"><span class="builtin-name">syntax-case</span></span> (<span class="name">datum-&gt;syntax</span> x <span class="symbol">'it</span>) ()</div><div class="line">         <span class="comment">; following `it` is not relevant with (datum-&gt;syntax ..), so you can name it `yy` sth..</span></div><div class="line">         (<span class="name">it</span></div><div class="line">           #'(let ((it test))</div><div class="line">               (if it then else))))))))</div></pre></td></tr></table></figure>
+<p>引入一层定义<code>it</code>的环境, 然后再通过<code>syntax-case</code>来捕捉到这个模式变量, 此时then/else所处的环境是在<code>it</code>被引入且定义的环境中:</p>
+<p>为了方便说明, 使用yy替换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(yy                       ; yy 作为模式变量, 捕获了 (datum-&gt;syntax x &apos;it), 这个syntax-object在将要发生的调用中的名字就是it</div><div class="line">  #&apos;(let ((yy test))      ; expansion后实际上变成了 ((it &lt;test所代表的表达式&gt;))</div><div class="line">      (if yy then else))) ; 同理这里的yy也变成了it, 而此时it在let的环境中, 可以被then/else所引用</div></pre></td></tr></table></figure>
+<p>所以实际上, 我们是在then/else调用时能访问到的环境中引入了it这个名字(并通过let定义); 假设我们不是通过<code>syntax-case</code>来捕获到yy, 那么在模板中yy仅仅是一个名字(就像我们在repl里直接输入yy), 显然在then/else的lexical socpe里当然引用不到yy.<br>由此可以知道syntax-object是一个存在于某个上下文环境(<strong>有意义</strong>)的名字!</p>
+<p>从<code>aif</code>的例子也可以看到, <code>define-syntax</code>也可以具有动态作用域的能力, 实际上我们想一下scheme里面为什么把<code>syntax-rules/case</code>叫做<strong>transformer</strong>? 因为它们能够:</p>
+<ol>
+<li>通过pattern matching来捕捉syntax-object(是不是像在分析语法树?)</li>
+<li>捕捉到的syntax-object可以被直接eval, 也可以被再次拆解/修改/引入新的syntax-object, 并且它们都属于当前操作的syntax-form的binding(是不是感觉像在编辑语法树?)</li>
+<li>没有被捕捉到的对象则保持定义时的binding, 从而避免了污染问题</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-06-18T05:06:45.000Z"><a href="/2017/06/18/continuation-at-first-glimpse/"><i>2017-06-18</i></a></time>
       
       
@@ -1090,486 +1184,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-03-17T15:59:27.000Z"><a href="/2014/03/17/id3/"><i>2014-03-17</i></a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/03/17/id3/">id3</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <script src="/assets/js/APlayer.min.js"> </script><h2 id="ID3v1"><a href="#ID3v1" class="headerlink" title="ID3v1"></a>ID3v1</h2><p>size: 128 bytes at eof</p>
-<table>
-<thead>
-<tr>
-<th>field</th>
-<th>range</th>
-<th>size</th>
-<th>extra</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> header</td>
-<td>00 -  02</td>
-<td>3</td>
-<td>“TAG”</td>
-</tr>
-<tr>
-<td> title</td>
-<td>03 -  32</td>
-<td>30</td>
-<td></td>
-</tr>
-<tr>
-<td> artist</td>
-<td>33 -  62</td>
-<td>30</td>
-<td></td>
-</tr>
-<tr>
-<td> album</td>
-<td>63 -  92</td>
-<td>30</td>
-<td></td>
-</tr>
-<tr>
-<td> year</td>
-<td>93 -  96</td>
-<td>4</td>
-<td>4 digit</td>
-</tr>
-<tr>
-<td> comment</td>
-<td>97 - 126</td>
-<td>30(28)</td>
-<td><code>track#</code> placed at last 2 byte, if comment over 28 byte then no <code>track#</code></td>
-</tr>
-<tr>
-<td> 0-pad</td>
-<td>125 - 125</td>
-<td>1</td>
-<td><em>optional</em>: only set under <code>28</code>, if set <code>track#</code> placed <code>0</code></td>
-</tr>
-<tr>
-<td> track</td>
-<td>126 - 126</td>
-<td>1</td>
-<td><em>optional</em>: only set under <code>28</code>, placed <code>track#</code>; invalid when <code>0-pad</code> not <code>0</code></td>
-</tr>
-<tr>
-<td> genre</td>
-<td>127 - 127</td>
-<td>1</td>
-<td>index in list of genres, or <code>255</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="ID3v2"><a href="#ID3v2" class="headerlink" title="ID3v2"></a>ID3v2</h2><ul>
-<li><em>variable</em> size</li>
-<li>usually place at start of file, yet allow end or combined, follow <a href="http://id3.org/id3v2.4.0-struture" target="_blank" rel="external">id3.org</a> spec:<blockquote>
-<ol>
-<li>Prepend the tag.</li>
-<li>Prepend a tag with all vital information and add a second tag at<br>  the end of the file, before tags from other tagging systems. The<br>  first tag is required to have a SEEK frame.</li>
-<li>Add a tag at the end of the file, before tags from other tagging<br>  systems. </li>
-</ol>
-</blockquote>
-</li>
-<li>detect approach:<blockquote>
-<ol>
-<li>Look for a prepended tag using the pattern: <code>$49 44 33 yy yy xx zz zz zz zz</code>, <code>$49 44 33</code> - <code>&#39;ID3&#39;</code>, <code>$yy &lt; $ff</code> - version number, <code>$xx</code> - flag, <code>$zz &lt; $80</code> - size</li>
-<li>If a SEEK frame was found, use its values to guide further<br>   searching.</li>
-<li>Look for a tag footer, scanning from the back of the file.</li>
-</ol>
-</blockquote>
-</li>
-<li>consist of <em>frame</em></li>
-</ul>
-<h3 id="ID3v2-2"><a href="#ID3v2-2" class="headerlink" title="ID3v2.2:"></a>ID3v2.2:</h3><ul>
-<li>considered obsolete</li>
-</ul>
-<h3 id="ID3v2-3"><a href="#ID3v2-3" class="headerlink" title="ID3v2.3"></a>ID3v2.3</h3><ul>
-<li>most widely used</li>
-<li>allow multi-values in a frame, <code>&#39;/&#39;</code> character to separate</li>
-</ul>
-<h3 id="ID3v2-4"><a href="#ID3v2-4" class="headerlink" title="ID3v2.4"></a>ID3v2.4</h3><ul>
-<li>utf-8 support</li>
-<li>separate character: from <code>&#39;/&#39;</code> to <code>null byte</code></li>
-</ul>
-<h3 id="tag-header"><a href="#tag-header" class="headerlink" title="tag header"></a>tag header</h3><p>size: 10 bytes</p>
-<table>
-<thead>
-<tr>
-<th>field</th>
-<th>range</th>
-<th>size</th>
-<th>extra</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>header</td>
-<td>00 - 02</td>
-<td>3</td>
-<td>“ID3”</td>
-</tr>
-<tr>
-<td>ver_major</td>
-<td>03 - 03</td>
-<td>1</td>
-<td>V2.3: 03; V2.4: 04</td>
-</tr>
-<tr>
-<td>ver_minor</td>
-<td>04 - 04</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>flag</td>
-<td>05 - 05</td>
-<td>1</td>
-<td>format as <code>abc00000</code>:<br> a – if unsync<br> b – if has extended head<br> c – if only experimental</td>
-</tr>
-<tr>
-<td>size</td>
-<td>06 - 09</td>
-<td>4</td>
-<td>include <em>frame</em> and <em>extended header</em>, but <strong>NOT</strong> include above 10 bytes of <em>tag header</em><br> format as <code>(0xxxxxx){4}</code>, heighest bit of each byte is 0, <strong>take off</strong> when computing</td>
-</tr>
-</tbody>
-</table>
-<h3 id="frame-header"><a href="#frame-header" class="headerlink" title="frame header"></a>frame header</h3><p>size: 10 bytes</p>
-<table>
-<thead>
-<tr>
-<th>field</th>
-<th>range</th>
-<th>size</th>
-<th>extra</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>frame ID</td>
-<td>00 - 03</td>
-<td>4</td>
-<td>frame indicator, referencing ID table</td>
-</tr>
-<tr>
-<td>size</td>
-<td>04 - 07</td>
-<td>4</td>
-<td><strong>NOT</strong> include frame header, <strong>NOT</strong> less than 1<br> format as <code>(xxxxxxxx){4}</code>, all 4 bytes used</td>
-</tr>
-<tr>
-<td>flags</td>
-<td>08 - 09</td>
-<td>2</td>
-<td>format as <code>abc00000 ijk00000</code><br> a – if ignore this frame(by tag)<br> b – if ignore this frame(by file)<br> c – if readonly(generally no one cares)<br> i – if compressed, one byte of two BCD codes<br> j – if encrypt<br> k – group indicator, if in same grousetp with other frame</td>
-</tr>
-</tbody>
-</table>
-<h3 id="frame-ID-table"><a href="#frame-ID-table" class="headerlink" title="frame ID table"></a>frame ID table</h3><p>2.4.0:</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>field</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TDRC</td>
-<td>recording date</td>
-</tr>
-<tr>
-<td>TDRL</td>
-<td>release date</td>
-</tr>
-<tr>
-<td>TDOR</td>
-<td>original release date</td>
-</tr>
-<tr>
-<td>TSOP</td>
-<td>artist sort order</td>
-</tr>
-<tr>
-<td>TSOA</td>
-<td>album sort order</td>
-</tr>
-</tbody>
-</table>
-<p>>= 2.3.0:</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>field</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TPE1</td>
-<td>artist</td>
-</tr>
-<tr>
-<td>TALB</td>
-<td>album</td>
-</tr>
-<tr>
-<td>TIT2</td>
-<td>title</td>
-</tr>
-<tr>
-<td>TYER</td>
-<td>year: ascii number</td>
-</tr>
-<tr>
-<td>TCON</td>
-<td>genre: <code>&#39;($genre_no)&#39;</code></td>
-</tr>
-<tr>
-<td>TPOS</td>
-<td>disc number</td>
-</tr>
-<tr>
-<td>TRCK</td>
-<td>trackno: <code>N(No.#)/M(total#)</code>, both ascii number(means that’s string?)</td>
-</tr>
-<tr>
-<td>TPE2</td>
-<td>albumartist</td>
-</tr>
-<tr>
-<td>TSO2</td>
-<td>albumartist sort order</td>
-</tr>
-<tr>
-<td>XSOP</td>
-<td>artist sort order(obsolete)</td>
-</tr>
-<tr>
-<td>XSOA</td>
-<td>album sort order(obsolete)</td>
-</tr>
-<tr>
-<td>TCMP</td>
-<td>compilation</td>
-</tr>
-<tr>
-<td>TORY</td>
-<td>originaldate</td>
-</tr>
-<tr>
-<td>TCOM</td>
-<td>composer</td>
-</tr>
-<tr>
-<td>TPE3</td>
-<td>conductor</td>
-</tr>
-<tr>
-<td>TEXT</td>
-<td>lyricist</td>
-</tr>
-<tr>
-<td>TPE4</td>
-<td>remixer</td>
-</tr>
-<tr>
-<td>TPUB</td>
-<td>publisher or label</td>
-</tr>
-<tr>
-<td>TIT3</td>
-<td>subtitle</td>
-</tr>
-<tr>
-<td>TMED</td>
-<td>media type</td>
-</tr>
-<tr>
-<td>COMM</td>
-<td>comment: enc<code>$xx</code>, lang<code>$xx xx xx</code>, short desc ended with <code>$00</code>, actual text<code>&lt;...&gt;</code></td>
-</tr>
-<tr>
-<td>TXXX</td>
-<td>user defined text info(see below for details)</td>
-</tr>
-</tbody>
-</table>
-<p>obsolete frames 2.2.0:</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>field</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TP1</td>
-<td>artist</td>
-</tr>
-<tr>
-<td>TP2</td>
-<td>albumartist</td>
-</tr>
-<tr>
-<td>TAL</td>
-<td>album</td>
-</tr>
-<tr>
-<td>TT2</td>
-<td>title</td>
-</tr>
-<tr>
-<td>TYE</td>
-<td>date</td>
-</tr>
-<tr>
-<td>TCO</td>
-<td>genre</td>
-</tr>
-<tr>
-<td>TPA</td>
-<td>disc</td>
-</tr>
-<tr>
-<td>TRK</td>
-<td>track</td>
-</tr>
-<tr>
-<td>TSP</td>
-<td>artist sort order</td>
-</tr>
-<tr>
-<td>TS2</td>
-<td>albumartist sort order</td>
-</tr>
-<tr>
-<td>TSA</td>
-<td>album sort order</td>
-</tr>
-<tr>
-<td>TCP</td>
-<td>compilation</td>
-</tr>
-<tr>
-<td>COM</td>
-<td>comment: same as <em>COMM</em> in v2.3 or above</td>
-</tr>
-</tbody>
-</table>
-<p>playback staffs:</p>
-<ul>
-<li>replay gain: labeld as <code>RGAD</code>, <code>RVA2(v2.4)</code> or <code>XRVA(v2.3 compatibility &amp; experimental)</code> in lagacy format</li>
-</ul>
-<p><strong>Preferred</strong> means to stroe this sort of metadata is use of <em>TXXX</em> key/value pair frame, see below.</p>
-<p>TXXX header:</p>
-<table>
-<thead>
-<tr>
-<th>field</th>
-<th>format</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>frame ID</td>
-<td>“TXXX”</td>
-</tr>
-<tr>
-<td>size</td>
-<td><code>$xx xx xx xx</code></td>
-</tr>
-<tr>
-<td>flags</td>
-<td><code>$40 $00</code></td>
-</tr>
-</tbody>
-</table>
-<p>TXXX frame struct:</p>
-<table>
-<thead>
-<tr>
-<th>field</th>
-<th>format</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>encoding</td>
-<td><code>$00</code> - iso-8859-1, <code>$01</code> - utf-16 with BOM, <code>$02</code> - utf-16 without BOM, <code>$03</code> - utf-8</td>
-</tr>
-<tr>
-<td>desc</td>
-<td><key string=""> ended with <code>$00</code></key></td>
-</tr>
-<tr>
-<td>value</td>
-<td><value string=""></value></td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>meta</th>
-<th>key</th>
-<th>value format</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>track replay gain</td>
-<td>“REPLAYGAIN_TARCK_GAIN”</td>
-<td><code>[-]a.bb dB</code>: <code>a</code> - integal portion(整数部分) [0-9], <code>bb</code> - decimal portion(小数部分)</td>
-</tr>
-<tr>
-<td>track peak</td>
-<td>“REPLAYGAIN_TARCK_PEAK”</td>
-<td><code>c.dddddd</code>: <code>c</code> - 0 or 1(1.000000: digital full scale)</td>
-</tr>
-<tr>
-<td>album replay gain</td>
-<td>“REPLAYGAIN_ALBUM_GAIN”</td>
-<td>-</td>
-</tr>
-<tr>
-<td>album peak</td>
-<td>“REPLAYGAIN_ALBUM_PEAK”</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<!--- vim: set ft=mkd: -->
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1584,7 +1198,7 @@
   <h3 class="title">Categories</h3>
   <ul class="entry">
   
-    <li><a href="/categories/lang/">lang<span>8</span></a></li>
+    <li><a href="/categories/lang/">lang<span>9</span></a></li>
   
     <li><a href="/categories/life/">life<span>1</span></a></li>
   
@@ -1610,7 +1224,7 @@
   
     <li><a href="/tags/ruby/">ruby<span>6</span></a></li>
   
-    <li><a href="/tags/scheme/">scheme<span>2</span></a></li>
+    <li><a href="/tags/scheme/">scheme<span>3</span></a></li>
   
   </ul>
 </div>
@@ -1620,7 +1234,7 @@
   
 <div class="widget">
   <h3 class="title">Archives</h3>
-  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/06/">2017 - 06</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
+  <ul class="entry-list"><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/12/">2017 - 12</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/06/">2017 - 06</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2017/04/">2017 - 04</a><span class="entry-list-count">1</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/12/">2014 - 12</a><span class="entry-list-count">2</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/11/">2014 - 11</a><span class="entry-list-count">4</span></li><li class="entry-list-item"><a class="entry-list-link" href="/archives/2014/03/">2014 - 03</a><span class="entry-list-count">2</span></li></ul>
 </div>
 
 
